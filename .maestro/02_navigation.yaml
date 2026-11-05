@@ -2,54 +2,57 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 ---
 # ==============================================================================
 # FLOW 2: NAVIGASI ANTAR MENU APLIKASI
-# UTS Mobile Testing - Pengujian Transisi & Navigasi Halaman
+# Mapping UAT: TC-DASH-004 (Bottom Navigation Bar) & UAT-13 (Responsivitas Menu)
 # ==============================================================================
 
 - launchApp:
     clearState: false
 
 - extendedWaitUntil:
-    visible: "Dashboard"
+    visible: "Beranda"
     timeout: 10000
 
-# 1. Navigasi ke Halaman Pesanan
-- tapOn: "Pesanan"
+# 1. Navigasi ke Halaman Order (Tab 'Order')
+- tapOn: "Order"
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 8000
 - assertVisible: "Daftar Order"
-- takeScreenshot: screenshots/02_nav_pesanan
+- takeScreenshot: screenshots/02_nav_01_order
 
-# 2. Navigasi ke Halaman Klien
-- tapOn: "Klien"
+# 2. Navigasi ke Halaman Customer (Tab 'Customer')
+- tapOn: "Customer"
 - extendedWaitUntil:
-    visible: ".*[Kk]lien.*"
+    visible: "Customer"
     timeout: 8000
-- takeScreenshot: screenshots/02_nav_klien
+- assertVisible: "Customer"
+- takeScreenshot: screenshots/02_nav_02_customer
 
-# 3. Navigasi ke Halaman Kalender
+# 3. Navigasi ke Halaman Kalender (Tab 'Kalender')
 - tapOn: "Kalender"
 - extendedWaitUntil:
-    visible: ".*[Kk]alender.*"
+    visible: "Kalender Deadline"
     timeout: 8000
-- takeScreenshot: screenshots/02_nav_kalender
+- assertVisible: "Kalender Deadline"
+- takeScreenshot: screenshots/02_nav_03_kalender
 
-# 4. Navigasi ke Menu Lainnya (Bottom Sheet)
+# 4. Navigasi ke Menu Lainnya (Tab 'Lainnya' - Bottom Sheet)
 - tapOn: "Lainnya"
 - extendedWaitUntil:
     visible: "Menu Lainnya"
     timeout: 6000
 - assertVisible: "Menu Lainnya"
+- assertVisible: "Layanan"
 - assertVisible: "Keuangan Bisnis"
+- assertVisible: "Analitik"
 - assertVisible: "Keuangan Pribadi"
-- takeScreenshot: screenshots/02_nav_menu_lainnya
+- takeScreenshot: screenshots/02_nav_04_menu_lainnya
 
-# 5. Kembali ke Dashboard Utama
+# 5. Kembali ke Halaman Beranda
 - back
-- tapOn: "Dashboard"
+- tapOn: "Beranda"
 - extendedWaitUntil:
-    visible: "Dashboard"
+    visible: "Order Baru"
     timeout: 6000
-- assertVisible: "Dashboard"
-- takeScreenshot: screenshots/02_nav_back_dashboard
-
+- assertVisible: "Beranda"
+- takeScreenshot: screenshots/02_nav_05_back_beranda

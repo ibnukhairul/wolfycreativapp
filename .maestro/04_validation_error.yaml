@@ -2,18 +2,18 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 ---
 # ==============================================================================
 # FLOW 4: VALIDASI KESALAHAN (NEGATIVE TESTING & FORM VALIDATION)
-# UTS Mobile Testing - Pengujian Penanganan Kesalahan Input Form
+# Mapping UAT: TC-ORD-005 (Validasi Form Pesanan Baru) & UAT-02 (Pesan Kesalahan)
 # ==============================================================================
 
 - launchApp:
     clearState: false
 
 - extendedWaitUntil:
-    visible: "Pesanan"
+    visible: "Order"
     timeout: 10000
 
-# 1. Menuju ke Form Order Baru
-- tapOn: "Pesanan"
+# 1. Menuju ke Form Order Baru via Tab Order
+- tapOn: "Order"
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 8000
@@ -22,20 +22,20 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     visible: "Buat Order"
     timeout: 8000
 
-# 2. Trigger Validasi Kesalahan dengan Klik "Buat Order" tanpa mengisi Form
+# 2. Trigger Validasi Kesalahan dengan Klik "Buat Order" saat form masih kosong
 - tapOn: "Buat Order"
 
 # 3. Assertion: Pesan Peringatan Validasi Muncul pada Layar
+# (Aplikasi memunculkan snackbar: 'Silakan pilih customer terlebih dahulu')
 - extendedWaitUntil:
     visible: ".*pilih customer.*"
     timeout: 5000
 - assertVisible: ".*pilih customer.*"
 - takeScreenshot: screenshots/04_validation_error_triggered
 
-# 4. Cleanup & Kembali ke Layar Utama
+# 4. Kembali dengan Aman ke Layar Daftar Order
 - back
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 6000
 - assertVisible: "Daftar Order"
-
