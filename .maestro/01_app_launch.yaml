@@ -1,23 +1,28 @@
 appId: com.wolfycreativ.wolfycreativ_mobile
 ---
 # ==============================================================================
-# FLOW 1: PEMBUKAAN APLIKASI (APP LAUNCH & SPLASH/MAIN SCREEN)
-# UTS Mobile Testing - Skenario Pembukaan & Kesiapan Aplikasi
+# FLOW 1: PEMBUKAAN APLIKASI (APP LAUNCH & KESIAPAN BERANDA)
+# Mapping UAT: TC-AUTH-005 (Auto-login) & TC-DASH-001 / UAT-03 (Ringkasan Beranda)
 # ==============================================================================
 
 - launchApp:
     clearState: false
 
+# Menunggu aplikasi termuat dan menampilkan antarmuka utama (Beranda)
 - extendedWaitUntil:
-    visible: "Dashboard"
+    visible: "Beranda"
     timeout: 15000
 
-# Assertion Elemen Kunci Halaman Utama
-- assertVisible: "Dashboard"
-- assertVisible: "Pesanan"
-- assertVisible: "Klien"
+# Verifikasi Menu Utama pada Bottom Navigation Bar sesuai aplikasi:
+# (Label navigasi aplikasi: Beranda, Order, Customer, Kalender, Lainnya)
+- assertVisible: "Beranda"
+- assertVisible: "Order"
+- assertVisible: "Customer"
 - assertVisible: "Kalender"
 - assertVisible: "Lainnya"
 
+# Verifikasi Elemen Kunci pada Layar Beranda (Quick Action Button)
+- assertVisible: "Order Baru"
+
 # Dokumentasi Bukti Eksekusi (Screenshot)
-- takeScreenshot: screenshots/01_app_launch_success
+- takeScreenshot: screenshots/01_app_launch_beranda
