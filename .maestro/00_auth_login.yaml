@@ -1,0 +1,49 @@
+appId: com.wolfycreativ.wolfycreativ_mobile
+---
+# ==============================================================================
+# FLOW: PENGUJIAN AUTENTIKASI & FORM LOGIN (POSITIVE & NEGATIVE TEST)
+# Mapping UAT: TC-AUTH-001, TC-AUTH-004, UAT-01, UAT-02
+# ==============================================================================
+
+# 1. Buka aplikasi dengan membersihkan sesi agar masuk ke Layar Login
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible: "WolfyCreativ"
+    timeout: 15000
+
+# Verifikasi Elemen Kunci Halaman Login
+- assertVisible: "WolfyCreativ"
+- assertVisible: "Masuk ke panel operasional"
+- assertVisible: "Email"
+- assertVisible: "Password"
+- assertVisible: "Masuk"
+- takeScreenshot: screenshots/00_login_screen_ready
+
+# 2. Uji Skenario Negatif: Validasi Field Kosong (TC-AUTH-004)
+# Menekan tombol 'Masuk' saat email & password belum diisi
+- tapOn: "Masuk"
+- extendedWaitUntil:
+    visible: "Email wajib diisi"
+    timeout: 5000
+- assertVisible: "Email wajib diisi"
+- assertVisible: "Password wajib diisi"
+- takeScreenshot: screenshots/00_login_validation_empty
+
+# 3. Uji Skenario Positif: Input Kredensial Login (TC-AUTH-001 / UAT-01)
+- tapOn: "nama@wolfycreativ.com"
+- inputText: "admin@wolfycreativ.com"
+
+- tapOn: "••••••••"
+- inputText: "admin123"
+
+- takeScreenshot: screenshots/00_login_input_filled
+- tapOn: "Masuk"
+
+# 4. Verifikasi Berhasil Masuk ke Beranda
+- extendedWaitUntil:
+    visible: "Beranda"
+    timeout: 15000
+- assertVisible: "Beranda"
+- takeScreenshot: screenshots/00_login_success_beranda
