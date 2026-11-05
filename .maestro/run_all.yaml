@@ -2,11 +2,11 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 ---
 # ==============================================================================
 # SUITE RUNNER: EKSEKUSI SELURUH FLOW MAESTRO SECARA OTOMATIS
-# UTS Mobile Testing - Batch Test Suite
+# UTS Mobile Testing - Batch Test Suite WolfyCreativ Mobile
 # ==============================================================================
 
+- runFlow: 00_auth_login.yaml
 - runFlow: 01_app_launch.yaml
 - runFlow: 02_navigation.yaml
 - runFlow: 03_transaction_crud.yaml
 - runFlow: 04_validation_error.yaml
-
