@@ -1,0 +1,40 @@
+appId: com.wolfycreativ.wolfycreativ_mobile
+---
+# ==============================================================================
+# FLOW 4: VALIDASI KESALAHAN (NEGATIVE TESTING & FORM VALIDATION)
+# UTS Mobile Testing - Pengujian Penanganan Kesalahan Input Form
+# ==============================================================================
+
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible: "Pesanan"
+    timeout: 10000
+
+# 1. Menuju ke Form Order Baru
+- tapOn: "Pesanan"
+- extendedWaitUntil:
+    visible: "Daftar Order"
+    timeout: 8000
+- tapOn: "Order Baru"
+- extendedWaitUntil:
+    visible: "Buat Order"
+    timeout: 8000
+
+# 2. Trigger Validasi Kesalahan dengan Klik "Buat Order" tanpa mengisi Form
+- tapOn: "Buat Order"
+
+# 3. Assertion: Pesan Peringatan Validasi Muncul pada Layar
+- extendedWaitUntil:
+    visible: ".*pilih customer.*"
+    timeout: 5000
+- assertVisible: ".*pilih customer.*"
+- takeScreenshot: screenshots/04_validation_error_triggered
+
+# 4. Cleanup & Kembali ke Layar Utama
+- back
+- extendedWaitUntil:
+    visible: "Daftar Order"
+    timeout: 6000
+- assertVisible: "Daftar Order"
