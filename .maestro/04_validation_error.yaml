@@ -38,3 +38,4 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     visible: "Daftar Order"
     timeout: 6000
 - assertVisible: "Daftar Order"
+

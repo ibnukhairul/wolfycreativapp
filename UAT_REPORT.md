@@ -230,3 +230,4 @@ Berdasarkan seluruh hasil pengujian User Acceptance Testing yang telah dilakukan
 |---|---|:---:|:---:|
 | **QA / Penguji** | Ibnu Khairul | *Disetujui* | 05 November 2026 |
 | **Dosen Pengampu** | Triyono M.Kom | *Menunggu Verifikasi* | - |
+

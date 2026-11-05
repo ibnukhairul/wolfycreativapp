@@ -9,3 +9,4 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - runFlow: 02_navigation.yaml
 - runFlow: 03_transaction_crud.yaml
 - runFlow: 04_validation_error.yaml
+

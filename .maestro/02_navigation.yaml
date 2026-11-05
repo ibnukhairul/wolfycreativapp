@@ -52,3 +52,4 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     timeout: 6000
 - assertVisible: "Dashboard"
 - takeScreenshot: screenshots/02_nav_back_dashboard
+

@@ -37,3 +37,4 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     timeout: 6000
 - assertVisible: "Daftar Order"
 - takeScreenshot: screenshots/03_order_flow_completed
+
