@@ -9,11 +9,11 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     clearState: false
 
 - extendedWaitUntil:
-    visible: "Order"
+    visible: ".*Order.*"
     timeout: 10000
 
 # 1. Buka Tab Menu Order
-- tapOn: "Order"
+- tapOn: ".*Order.*"
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 8000

@@ -9,11 +9,11 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     clearState: false
 
 - extendedWaitUntil:
-    visible: "Beranda"
+    visible: "Order Baru"
     timeout: 10000
 
 # 1. Navigasi ke Halaman Order (Tab 'Order')
-- tapOn: "Order"
+- tapOn: ".*Order.*"
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 8000
@@ -21,7 +21,7 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - takeScreenshot: screenshots/02_nav_01_order
 
 # 2. Navigasi ke Halaman Customer (Tab 'Customer')
-- tapOn: "Customer"
+- tapOn: ".*Customer.*"
 - extendedWaitUntil:
     visible: "Customer"
     timeout: 8000
@@ -29,7 +29,7 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - takeScreenshot: screenshots/02_nav_02_customer
 
 # 3. Navigasi ke Halaman Kalender (Tab 'Kalender')
-- tapOn: "Kalender"
+- tapOn: ".*Kalender.*"
 - extendedWaitUntil:
     visible: "Kalender Deadline"
     timeout: 8000
@@ -37,7 +37,7 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - takeScreenshot: screenshots/02_nav_03_kalender
 
 # 4. Navigasi ke Menu Lainnya (Tab 'Lainnya' - Bottom Sheet)
-- tapOn: "Lainnya"
+- tapOn: ".*Lainnya.*"
 - extendedWaitUntil:
     visible: "Menu Lainnya"
     timeout: 6000
@@ -50,9 +50,9 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 
 # 5. Kembali ke Halaman Beranda
 - back
-- tapOn: "Beranda"
+- tapOn: ".*Beranda.*"
 - extendedWaitUntil:
     visible: "Order Baru"
     timeout: 6000
-- assertVisible: "Beranda"
+- assertVisible: "Order Baru"
 - takeScreenshot: screenshots/02_nav_05_back_beranda

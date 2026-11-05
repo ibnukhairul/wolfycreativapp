@@ -8,21 +8,15 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - launchApp:
     clearState: false
 
-# Menunggu aplikasi termuat dan menampilkan antarmuka utama (Beranda)
+# Menunggu aplikasi termuat dan menampilkan antarmuka Beranda
 - extendedWaitUntil:
-    visible: "Beranda"
+    visible: "Order Baru"
     timeout: 15000
 
-# Verifikasi Menu Utama pada Bottom Navigation Bar sesuai aplikasi:
-# (Label navigasi aplikasi: Beranda, Order, Customer, Kalender, Lainnya)
-- assertVisible: "Beranda"
-- assertVisible: "Order"
-- assertVisible: "Customer"
-- assertVisible: "Kalender"
-- assertVisible: "Lainnya"
-
-# Verifikasi Elemen Kunci pada Layar Beranda (Quick Action Button)
+# Verifikasi Elemen Kunci pada Layar Beranda (Hero & Quick Action)
 - assertVisible: "Order Baru"
+- assertVisible: "Tambah Customer"
+- assertVisible: "To Do Hari Ini"
 
 # Dokumentasi Bukti Eksekusi (Screenshot)
 - takeScreenshot: screenshots/01_app_launch_beranda

@@ -36,19 +36,21 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - tapOn:
     below: "Email"
     above: "Password"
-- inputText: "admin@wolfycreativ.com"
+- inputText: ${MAESTRO_USER_EMAIL:-dev@dev.id}
 
 - tapOn:
     below: "Password"
     above: "Masuk"
-- inputText: "admin123"
+- inputText: ${MAESTRO_USER_PASS:-dev234}
 
 - takeScreenshot: screenshots/00_login_input_filled
 - tapOn: "Masuk"
 
 # 4. Verifikasi Berhasil Masuk ke Beranda
+# Menggunakan elemen hero 'Order Baru' & 'To Do Hari Ini' yang khas di Beranda
 - extendedWaitUntil:
-    visible: "Beranda"
+    visible: "Order Baru"
     timeout: 15000
-- assertVisible: "Beranda"
+- assertVisible: "Order Baru"
+- assertVisible: "To Do Hari Ini"
 - takeScreenshot: screenshots/00_login_success_beranda
