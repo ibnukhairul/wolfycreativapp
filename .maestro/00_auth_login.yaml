@@ -32,10 +32,15 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - takeScreenshot: screenshots/00_login_validation_empty
 
 # 3. Uji Skenario Positif: Input Kredensial Login (TC-AUTH-001 / UAT-01)
-- tapOn: "nama@wolfycreativ.com"
+# Menggunakan selector relatif posisi (karena hintText di Flutter berupa canvas render)
+- tapOn:
+    below: "Email"
+    above: "Password"
 - inputText: "admin@wolfycreativ.com"
 
-- tapOn: "••••••••"
+- tapOn:
+    below: "Password"
+    above: "Masuk"
 - inputText: "admin123"
 
 - takeScreenshot: screenshots/00_login_input_filled
