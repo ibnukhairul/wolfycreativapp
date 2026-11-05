@@ -1,0 +1,23 @@
+appId: com.wolfycreativ.wolfycreativ_mobile
+---
+# ==============================================================================
+# FLOW 1: PEMBUKAAN APLIKASI (APP LAUNCH & SPLASH/MAIN SCREEN)
+# UTS Mobile Testing - Skenario Pembukaan & Kesiapan Aplikasi
+# ==============================================================================
+
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible: "Dashboard"
+    timeout: 15000
+
+# Assertion Elemen Kunci Halaman Utama
+- assertVisible: "Dashboard"
+- assertVisible: "Pesanan"
+- assertVisible: "Klien"
+- assertVisible: "Kalender"
+- assertVisible: "Lainnya"
+
+# Dokumentasi Bukti Eksekusi (Screenshot)
+- takeScreenshot: screenshots/01_app_launch_success

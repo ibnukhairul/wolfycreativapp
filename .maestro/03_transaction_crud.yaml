@@ -1,0 +1,39 @@
+appId: com.wolfycreativ.wolfycreativ_mobile
+---
+# ==============================================================================
+# FLOW 3: ALUR TRANSAKSI & CRUD (MANAJEMEN PESANAN)
+# UTS Mobile Testing - Pengujian Pembuatan Order & Interaksi Form
+# ==============================================================================
+
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible: "Pesanan"
+    timeout: 10000
+
+# 1. Masuk ke Tab Pesanan
+- tapOn: "Pesanan"
+- extendedWaitUntil:
+    visible: "Daftar Order"
+    timeout: 8000
+- assertVisible: "Daftar Order"
+
+# 2. Buka Form Pembuatan Order Baru via FAB
+- tapOn: "Order Baru"
+- extendedWaitUntil:
+    visible: "Buat Order"
+    timeout: 8000
+
+# 3. Assertion Komponen Form Terbuka Lengkap
+- assertVisible: "Order Baru"
+- assertVisible: "Buat Order"
+- takeScreenshot: screenshots/03_form_order_baru_loaded
+
+# 4. Kembali ke Halaman Daftar Pesanan
+- back
+- extendedWaitUntil:
+    visible: "Daftar Order"
+    timeout: 6000
+- assertVisible: "Daftar Order"
+- takeScreenshot: screenshots/03_order_flow_completed
