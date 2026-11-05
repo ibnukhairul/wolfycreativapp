@@ -1,0 +1,54 @@
+appId: com.wolfycreativ.wolfycreativ_mobile
+---
+# ==============================================================================
+# FLOW 2: NAVIGASI ANTAR MENU APLIKASI
+# UTS Mobile Testing - Pengujian Transisi & Navigasi Halaman
+# ==============================================================================
+
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible: "Dashboard"
+    timeout: 10000
+
+# 1. Navigasi ke Halaman Pesanan
+- tapOn: "Pesanan"
+- extendedWaitUntil:
+    visible: "Daftar Order"
+    timeout: 8000
+- assertVisible: "Daftar Order"
+- takeScreenshot: screenshots/02_nav_pesanan
+
+# 2. Navigasi ke Halaman Klien
+- tapOn: "Klien"
+- extendedWaitUntil:
+    visible: ".*[Kk]lien.*"
+    timeout: 8000
+- takeScreenshot: screenshots/02_nav_klien
+
+# 3. Navigasi ke Halaman Kalender
+- tapOn: "Kalender"
+- extendedWaitUntil:
+    visible: ".*[Kk]alender.*"
+    timeout: 8000
+- takeScreenshot: screenshots/02_nav_kalender
+
+# 4. Navigasi ke Menu Lainnya (Bottom Sheet)
+- tapOn: "Lainnya"
+- extendedWaitUntil:
+    visible: "Menu Lainnya"
+    timeout: 6000
+- assertVisible: "Menu Lainnya"
+- assertVisible: "Keuangan Bisnis"
+- assertVisible: "Keuangan Pribadi"
+- takeScreenshot: screenshots/02_nav_menu_lainnya
+
+# 5. Kembali ke Dashboard Utama
+- back
+- tapOn: "Dashboard"
+- extendedWaitUntil:
+    visible: "Dashboard"
+    timeout: 6000
+- assertVisible: "Dashboard"
+- takeScreenshot: screenshots/02_nav_back_dashboard
