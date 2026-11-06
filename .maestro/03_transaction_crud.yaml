@@ -9,11 +9,12 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     clearState: false
 
 - extendedWaitUntil:
-    visible: ".*Order.*"
+    visible: "Order Baru"
     timeout: 10000
 
-# 1. Buka Tab Menu Order
-- tapOn: ".*Order.*"
+# 1. Buka Tab Menu Order di Bottom Navigation Bar
+- tapOn:
+    point: "30%, 95%"
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 8000
@@ -27,6 +28,8 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 
 # 3. Assertion Komponen Utama Form Terbuka Lengkap
 - assertVisible: "Order Baru"
+- assertVisible: "Customer"
+- assertVisible: "Layanan Master"
 - assertVisible: "Buat Order"
 - takeScreenshot: screenshots/03_form_order_baru_loaded
 
@@ -37,3 +40,11 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     timeout: 6000
 - assertVisible: "Daftar Order"
 - takeScreenshot: screenshots/03_crud_verified
+
+# 5. Kembali ke Halaman Beranda
+- tapOn:
+    point: "5%, 95%"
+- extendedWaitUntil:
+    visible: "Order Baru"
+    timeout: 6000
+- assertVisible: "Order Baru"
