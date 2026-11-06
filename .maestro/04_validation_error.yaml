@@ -9,23 +9,27 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     clearState: false
 
 - extendedWaitUntil:
-    visible: ".*Order.*"
+    visible: "Order Baru"
     timeout: 10000
 
-# 1. Menuju ke Form Order Baru via Tab Order
-- tapOn: ".*Order.*"
+# 1. Menuju ke Halaman Order via Tab 'Order' di Bottom Navigation Bar
+- tapOn:
+    point: "30%, 95%"
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 8000
+- assertVisible: "Daftar Order"
+
+# 2. Buka Form Order Baru via FAB ("Order Baru")
 - tapOn: "Order Baru"
 - extendedWaitUntil:
     visible: "Buat Order"
     timeout: 8000
 
-# 2. Trigger Validasi Kesalahan dengan Klik "Buat Order" saat form masih kosong
+# 3. Trigger Validasi Kesalahan dengan Klik "Buat Order" saat form masih kosong
 - tapOn: "Buat Order"
 
-# 3. Assertion: Pesan Peringatan Validasi Muncul pada Layar
+# 4. Assertion: Pesan Peringatan Validasi Muncul pada Layar
 # (Aplikasi memunculkan snackbar: 'Silakan pilih customer terlebih dahulu')
 - extendedWaitUntil:
     visible: ".*pilih customer.*"
@@ -33,9 +37,16 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - assertVisible: ".*pilih customer.*"
 - takeScreenshot: screenshots/04_validation_error_triggered
 
-# 4. Kembali dengan Aman ke Layar Daftar Order
+# 5. Kembali ke Layar Daftar Order lalu ke Beranda
 - back
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 6000
 - assertVisible: "Daftar Order"
+
+- tapOn:
+    point: "5%, 95%"
+- extendedWaitUntil:
+    visible: "Order Baru"
+    timeout: 6000
+- assertVisible: "Order Baru"

@@ -12,24 +12,28 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     visible: "Order Baru"
     timeout: 10000
 
-# 1. Navigasi ke Halaman Order (Tab 'Order')
-- tapOn: ".*Order.*"
+# 1. Navigasi ke Halaman Order (Tab 'Order' di Bottom Navigation Bar)
+# Menggunakan regex exact ^Order$ agar tidak mengklik tombol chip "+ Order Baru" di atas
+- tapOn:
+    point: "30%, 95%"
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 8000
 - assertVisible: "Daftar Order"
 - takeScreenshot: screenshots/02_nav_01_order
 
-# 2. Navigasi ke Halaman Customer (Tab 'Customer')
-- tapOn: ".*Customer.*"
+# 2. Navigasi ke Halaman Customer (Tab 'Customer' di Bottom Navigation Bar)
+- tapOn:
+    point: "50%, 95%"
 - extendedWaitUntil:
     visible: "Customer"
     timeout: 8000
 - assertVisible: "Customer"
 - takeScreenshot: screenshots/02_nav_02_customer
 
-# 3. Navigasi ke Halaman Kalender (Tab 'Kalender')
-- tapOn: ".*Kalender.*"
+# 3. Navigasi ke Halaman Kalender (Tab 'Kalender' di Bottom Navigation Bar)
+- tapOn:
+    point: "75%, 95%"
 - extendedWaitUntil:
     visible: "Kalender Deadline"
     timeout: 8000
@@ -37,7 +41,8 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - takeScreenshot: screenshots/02_nav_03_kalender
 
 # 4. Navigasi ke Menu Lainnya (Tab 'Lainnya' - Bottom Sheet)
-- tapOn: ".*Lainnya.*"
+- tapOn:
+    point: "95%, 95%"
 - extendedWaitUntil:
     visible: "Menu Lainnya"
     timeout: 6000
@@ -50,7 +55,8 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 
 # 5. Kembali ke Halaman Beranda
 - back
-- tapOn: ".*Beranda.*"
+- tapOn:
+    point: "5%, 95%"
 - extendedWaitUntil:
     visible: "Order Baru"
     timeout: 6000
