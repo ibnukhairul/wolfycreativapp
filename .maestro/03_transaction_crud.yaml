@@ -1,8 +1,24 @@
 appId: com.wolfycreativ.wolfycreativ_mobile
 ---
 # ==============================================================================
-# FLOW 3: ALUR TRANSAKSI & CRUD (FORM PEMBUATAN ORDER BARU)
-# Mapping UAT: TC-ORD-004 (Tambah Pesanan Baru) & UAT-04 (Buat Pesanan Baru)
+# FLOW 3: ALUR TRANSAKSI LENGKAP (END-TO-END CRUD TEST)
+# Mapping UAT: TC-ORD-001 ~ TC-ORD-006, TC-CUST-001, TC-CUST-004, UAT-04 ~ UAT-09
+#
+# Skenario Lengkap:
+#   A. Tambah Customer Baru (khusus testing) via halaman Customer
+#   B. Buat Order Baru untuk customer tersebut (pilih customer, layanan, harga, catatan)
+#   C. Verifikasi Order muncul di Detail Order
+#   D. Update status order (Baru -> Proses, Preview, Revisi, Setting File, Selesai, dll)
+#   E. Catat Pembayaran Order (DP Testing)
+#   F. Kembali ke Beranda, periksa To Do Hari Ini
+#   G. Cek Kalender Deadline
+#   H. Kembali ke Daftar Order, buka order testing
+#   I. Hapus Catatan Pembayaran terlebih dahulu sebelum menghapus order
+#   J. Hapus Order testing
+#   K. Navigasi ke Customer, hapus Customer testing yang dibuat tadi
+#   L. Kembali ke Beranda (Semua bersih, flow selesai)
+#
+# Semua data testing memiliki identitas "MAESTRO" agar mudah dibedakan & dibersihkan
 # ==============================================================================
 
 - launchApp:
@@ -10,41 +26,343 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 
 - extendedWaitUntil:
     visible: "Order Baru"
-    timeout: 10000
+    timeout: 15000
 
-# 1. Buka Tab Menu Order di Bottom Navigation Bar
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN A: TAMBAH CUSTOMER BARU KHUSUS TESTING                      ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# A1. Navigasi ke Tab Customer
+- tapOn:
+    point: "50%, 95%"
+- extendedWaitUntil:
+    visible: "Customer"
+    timeout: 8000
+- takeScreenshot: screenshots/03_A1_customer_list
+
+# A2. Tap FAB "Customer Baru" untuk buka dialog Tambah Customer
+- tapOn: "Customer Baru"
+- extendedWaitUntil:
+    visible: "Tambah Customer Baru"
+    timeout: 5000
+- assertVisible: "Tambah Customer Baru"
+- assertVisible: "Nama Lengkap"
+- assertVisible: "Nomor WhatsApp"
+- takeScreenshot: screenshots/03_A2_dialog_tambah_customer
+
+# A3. Isi form customer baru
+# Field: Nama Lengkap
+- tapOn:
+    below: "Nama Lengkap"
+- inputText: "@Maestro Test Customer"
+
+# Field: Nomor WhatsApp
+- tapOn: "Nomor WhatsApp"
+- inputText: "081200000000"
+
+# Field: Instagram (Opsional)
+- tapOn: "Instagram (Opsional)"
+- inputText: "@maestro_test"
+
+- takeScreenshot: screenshots/03_A3_customer_form_filled
+
+# A4. Simpan customer baru
+- tapOn: "Simpan"
+- extendedWaitUntil:
+    visible: ".*Maestro Test Customer.*"
+    timeout: 8000
+- assertVisible: ".*Maestro Test Customer.*"
+- takeScreenshot: screenshots/03_A4_customer_saved
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN B: BUAT ORDER BARU UNTUK CUSTOMER TESTING                   ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# B1. Navigasi ke Tab Order
 - tapOn:
     point: "30%, 95%"
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 8000
 - assertVisible: "Daftar Order"
+- takeScreenshot: screenshots/03_B1_daftar_order
 
-# 2. Buka Form Pembuatan Order Baru via FAB ("Order Baru")
+# B2. Buka Form Order Baru via FAB
 - tapOn: "Order Baru"
 - extendedWaitUntil:
     visible: "Buat Order"
     timeout: 8000
-
-# 3. Assertion Komponen Utama Form Terbuka Lengkap
 - assertVisible: "Order Baru"
 - assertVisible: "Customer"
 - assertVisible: "Layanan Master"
+- assertVisible: "Harga Order (Rp)"
 - assertVisible: "Buat Order"
-- takeScreenshot: screenshots/03_form_order_baru_loaded
+- takeScreenshot: screenshots/03_B2_form_order_empty
 
-# 4. Kembali ke Daftar Order
+# B3. Pilih Customer — tap area selector customer
+- tapOn: "Pilih atau cari customer..."
+- extendedWaitUntil:
+    visible: "Pilih Customer"
+    timeout: 5000
+- assertVisible: "Pilih Customer"
+- takeScreenshot: screenshots/03_B3_customer_picker_opened
+
+# B4. Cari & pilih customer testing
+- inputText: "Maestro"
+- extendedWaitUntil:
+    visible: ".*Maestro Test Customer.*"
+    timeout: 5000
+- tapOn:
+    text: ".*Maestro Test Customer.*"
+    index: 0
+- extendedWaitUntil:
+    visible: ".*Maestro Test Customer.*"
+    timeout: 5000
+- takeScreenshot: screenshots/03_B4_customer_selected
+
+# B5. Pilih Layanan — tap dropdown layanan
+- tapOn: "Pilih layanan..."
+- extendedWaitUntil:
+    visible: ".*Jersey.*"
+    timeout: 5000
+- takeScreenshot: screenshots/03_B5_service_dropdown
+- tapOn:
+    text: ".*Jersey.*"
+    index: 0
+- takeScreenshot: screenshots/03_B5b_service_selected
+
+# B6. Input Harga Order — hapus dulu isi otomatis, lalu input harga baru
+- tapOn:
+    below: "Harga Order (Rp)"
+    above: "Tanggal Order"
+- longPressOn:
+    below: "Harga Order (Rp)"
+    above: "Tanggal Order"
+- eraseText: 20
+- inputText: "150000"
+- hideKeyboard
+- takeScreenshot: screenshots/03_B6_price_filled
+
+# B7. Input Catatan (Opsional)
+- scrollUntilVisible:
+    element: "Catatan (Opsional)"
+    direction: DOWN
+    timeout: 5000
+- tapOn:
+    below: "Catatan (Opsional)"
+- inputText: "[MAESTRO-TEST] Order untuk automated testing"
+- hideKeyboard
+- takeScreenshot: screenshots/03_B7_notes_filled
+
+# B8. Submit Order — tekan tombol "Buat Order"
+- scrollUntilVisible:
+    element: "Buat Order"
+    direction: DOWN
+    timeout: 3000
+- tapOn: "Buat Order"
+
+# B9. Verifikasi masuk ke halaman Detail Order setelah berhasil membuat
+- extendedWaitUntil:
+    visible: "Detail Order"
+    timeout: 10000
+- assertVisible: "Detail Order"
+- assertVisible: "@Maestro Test Customer"
+- assertVisible: "Baru"
+- takeScreenshot: screenshots/03_B9_order_created_detail
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN C: VERIFIKASI DETAIL ORDER                                  ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# C1. Assert elemen-elemen penting di Detail Order
+- assertVisible: "Ubah Status Pengerjaan"
+- assertVisible: "Pembayaran"
+- takeScreenshot: screenshots/03_C1_order_detail_verified
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN D: UPDATE STATUS ORDER (Baru → Proses)                      ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# D1. Uji tombol-tombol status pengerjaan
+- tapOn: "Proses"
+- tapOn: "Preview"
+- tapOn: "Revisi"
+- tapOn: "Setting File"
+- tapOn: "Selesai"
+- tapOn: "Batal"
+- tapOn: "Tidak"
+- tapOn: "Proses"
+- extendedWaitUntil:
+    visible: "Proses"
+    timeout: 5000
+- takeScreenshot: screenshots/03_D1_status_updated_proses
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN E: CATAT PEMBAYARAN ORDER (UAT-06 / CATAT PEMBAYARAN)       ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# E1. Scroll ke tombol Catat Pembayaran & buka modal
+- scrollUntilVisible:
+    element: ".*Catat Pembayaran.*"
+    direction: DOWN
+    timeout: 5000
+- tapOn: ".*Catat Pembayaran.*"
+- extendedWaitUntil:
+    visible: "Catat Pembayaran Order"
+    timeout: 5000
+- assertVisible: "Catat Pembayaran Order"
+- assertVisible: "Nominal Pembayaran (Rp)"
+
+# E2. Input Nominal Pembayaran (DP Rp 50.000)
+- inputText: "50000"
+
+# E3. Input Catatan Pembayaran
+- tapOn:
+    below: "Catatan Pembayaran (Opsional)"
+    above: "Simpan Pembayaran"
+- inputText: "DP Maestro"
+- hideKeyboard
+- takeScreenshot: screenshots/03_E1_payment_modal_filled
+
+# E4. Simpan Pembayaran
+- tapOn: "Simpan Pembayaran"
+- extendedWaitUntil:
+    visible: "Riwayat Pembayaran"
+    timeout: 8000
+- assertVisible: "Riwayat Pembayaran"
+- assertVisible: ".*DP Maestro.*"
+- takeScreenshot: screenshots/03_E2_payment_saved
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN F: VERIFIKASI TO DO DI BERANDA                              ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# F1. Kembali ke Daftar Order
 - back
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 6000
-- assertVisible: "Daftar Order"
-- takeScreenshot: screenshots/03_crud_verified
 
-# 5. Kembali ke Halaman Beranda
+# F2. Navigasi ke Beranda
+- tapOn:
+    point: "5%, 95%"
+- extendedWaitUntil:
+    visible: "To Do Hari Ini"
+    timeout: 8000
+- assertVisible: "To Do Hari Ini"
+- takeScreenshot: screenshots/03_F_beranda_todo
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN G: CEK KALENDER DEADLINE                                    ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# G1. Navigasi ke Tab Kalender
+- tapOn:
+    point: "75%, 95%"
+- extendedWaitUntil:
+    visible: "Kalender Deadline"
+    timeout: 8000
+- assertVisible: "Kalender Deadline"
+- takeScreenshot: screenshots/03_G_kalender_deadline
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN H: KEMBALI KE DAFTAR ORDER & BUKA ORDER TESTING             ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# H1. Navigasi ke Tab Order
+- tapOn:
+    point: "30%, 95%"
+- extendedWaitUntil:
+    visible: "Daftar Order"
+    timeout: 8000
+
+# H2. Cari order testing di Daftar Order
+- assertVisible: ".*Maestro Test Customer.*"
+- takeScreenshot: screenshots/03_H1_order_in_list
+
+# H3. Buka order testing
+- tapOn: ".*Maestro Test Customer.*"
+- extendedWaitUntil:
+    visible: "Detail Order"
+    timeout: 8000
+- assertVisible: "Detail Order"
+- assertVisible: "@Maestro Test Customer"
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN I: HAPUS CATATAN PEMBAYARAN (SEBELUM HAPUS ORDER)           ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# I1. Scroll ke Riwayat Pembayaran & hapus catatan pembayaran DP Maestro
+- scrollUntilVisible:
+    element: "Riwayat Pembayaran"
+    direction: DOWN
+    timeout: 5000
+- tapOn:
+    rightOf: ".*DP Maestro.*"
+- extendedWaitUntil:
+    visible: "Hapus Pembayaran?"
+    timeout: 5000
+- assertVisible: "Hapus Pembayaran?"
+- tapOn: "Hapus"
+- takeScreenshot: screenshots/03_I_payment_deleted
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN J: HAPUS ORDER TESTING                                      ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# J1. Tap tombol Hapus Order di AppBar
+- tapOn: "Hapus Order"
+- extendedWaitUntil:
+    visible: "Hapus Order?"
+    timeout: 5000
+- assertVisible: "Hapus Order?"
+- tapOn: "Hapus"
+- extendedWaitUntil:
+    visible: "Daftar Order"
+    timeout: 8000
+- takeScreenshot: screenshots/03_J_order_deleted
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN K: HAPUS CUSTOMER TESTING                                   ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
+# K1. Navigasi ke Tab Customer di Bottom Navigation Bar
+- tapOn:
+    point: "50%, 95%"
+- extendedWaitUntil:
+    visible: "Customer"
+    timeout: 8000
+- assertVisible: "Customer"
+
+# K2. Buka customer testing yang dibuat tadi
+- tapOn: ".*Maestro Test Customer.*"
+- extendedWaitUntil:
+    visible: "Detail Customer"
+    timeout: 8000
+- assertVisible: "Detail Customer"
+- assertVisible: ".*Maestro Test Customer.*"
+- takeScreenshot: screenshots/03_K1_customer_detail_for_delete
+
+# K3. Hapus customer testing via icon delete di AppBar
+- tapOn: "Hapus Customer"
+- extendedWaitUntil:
+    visible: "Hapus Customer?"
+    timeout: 5000
+- assertVisible: "Hapus Customer?"
+- tapOn: "Hapus"
+- extendedWaitUntil:
+    visible: "Customer"
+    timeout: 8000
+- takeScreenshot: screenshots/03_K2_customer_deleted
+
+# ╔════════════════════════════════════════════════════════════════════════╗
+# ║  BAGIAN L: KEMBALI KE BERANDA (SELESAI)                             ║
+# ╚════════════════════════════════════════════════════════════════════════╝
+
 - tapOn:
     point: "5%, 95%"
 - extendedWaitUntil:
     visible: "Order Baru"
     timeout: 6000
 - assertVisible: "Order Baru"
+- takeScreenshot: screenshots/03_L_test_complete

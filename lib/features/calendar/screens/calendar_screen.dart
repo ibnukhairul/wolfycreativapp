@@ -55,6 +55,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         title: const Text('Kalender Deadline'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: 'Segarkan',
+            onPressed: () {
+              ref.invalidate(calendarOrdersProvider);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.today_rounded),
             tooltip: 'Hari Ini',
             onPressed: () {
@@ -84,8 +91,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           final todayKey = _dateKey(DateTime.now());
           final todayOrders = ordersByDay[todayKey] ?? [];
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          return RefreshIndicator(
+            color: AppColors.primary,
+            onRefresh: () async {
+              ref.invalidate(calendarOrdersProvider);
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -365,8 +378,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 ],
               ],
             ),
-          );
-        },
+          ),
+        );
+      },
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.primary),
         ),

@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/error_handler.dart';
 import '../../orders/providers/order_providers.dart';
 import '../providers/finance_providers.dart';
 import '../repositories/finance_repository.dart';
@@ -214,12 +215,7 @@ class FinanceScreen extends ConsumerWidget {
                                   ref.invalidate(businessExpensesProvider);
                                 } catch (e) {
                                   if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Gagal menyimpan pengeluaran: $e'),
-                                        backgroundColor: AppColors.destructive,
-                                      ),
-                                    );
+                                    ErrorHandler.showError(context, e, prefix: 'Gagal menyimpan pengeluaran');
                                   }
                                 }
                               },

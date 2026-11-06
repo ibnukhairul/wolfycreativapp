@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/error_handler.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -39,7 +40,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
     } catch (e) {
       setState(() {
-        _errorMessage = e.toString().replaceFirst('Exception: ', '').replaceFirst('AuthException: ', '');
+        _errorMessage = ErrorHandler.parse(e);
       });
     }
   }

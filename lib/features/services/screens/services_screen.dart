@@ -4,6 +4,7 @@ import '../../../core/models/models.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/currency_formatter.dart';
+import '../../../core/utils/error_handler.dart';
 import '../providers/service_providers.dart';
 
 class ServicesScreen extends ConsumerWidget {
@@ -65,12 +66,7 @@ class ServicesScreen extends ConsumerWidget {
                 ref.invalidate(servicesListProvider);
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Gagal menyimpan layanan: $e'),
-                      backgroundColor: AppColors.destructive,
-                    ),
-                  );
+                  ErrorHandler.showError(context, e, prefix: 'Gagal menyimpan layanan');
                 }
               }
             },
@@ -229,14 +225,7 @@ class ServicesScreen extends ConsumerWidget {
                                   ref.invalidate(servicesListProvider);
                                 } catch (e) {
                                   if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(e
-                                            .toString()
-                                            .replaceFirst('Exception: ', '')),
-                                        backgroundColor: AppColors.destructive,
-                                      ),
-                                    );
+                                    ErrorHandler.showError(context, e, prefix: 'Gagal menghapus layanan');
                                   }
                                 }
                               }

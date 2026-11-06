@@ -8,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/error_handler.dart';
 import '../providers/personal_finance_providers.dart';
 import '../repositories/personal_finance_repository.dart';
 
@@ -334,12 +335,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                   _refreshAll();
                                 } catch (e) {
                                   if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Gagal catat transaksi: $e'),
-                                        backgroundColor: AppColors.destructive,
-                                      ),
-                                    );
+                                    ErrorHandler.showError(context, e, prefix: 'Gagal mencatat transaksi');
                                   }
                                 }
                               },
@@ -547,12 +543,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                 final amount = num.tryParse(amountCtrl.text) ?? 0;
                                 if (amount <= 0 || fromAcc == null || toAcc == null) return;
                                 if (fromAcc!.id == toAcc!.id) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Dompet asal dan tujuan tidak boleh sama!'),
-                                      backgroundColor: AppColors.destructive,
-                                    ),
-                                  );
+                                  ErrorHandler.showWarning(context, 'Dompet asal dan tujuan tidak boleh sama!');
                                   return;
                                 }
 
@@ -573,12 +564,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                   _refreshAll();
                                 } catch (e) {
                                   if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Gagal transfer: $e'),
-                                        backgroundColor: AppColors.destructive,
-                                      ),
-                                    );
+                                    ErrorHandler.showError(context, e, prefix: 'Gagal melakukan transfer');
                                   }
                                 }
                               },
@@ -661,9 +647,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                     _refreshAll();
                   } catch (e) {
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Gagal hapus: $e'), backgroundColor: AppColors.destructive),
-                      );
+                      ErrorHandler.showError(context, e, prefix: 'Gagal menghapus dompet');
                     }
                   }
                 }
@@ -688,9 +672,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                 _refreshAll();
               } catch (e) {
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Gagal: $e'), backgroundColor: AppColors.destructive),
-                  );
+                  ErrorHandler.showError(context, e, prefix: 'Gagal menyimpan dompet');
                 }
               }
             },

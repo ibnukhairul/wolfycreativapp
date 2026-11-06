@@ -7,7 +7,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/error_handler.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../calendar/screens/calendar_screen.dart';
 import '../../dashboard/providers/dashboard_providers.dart';
 import '../providers/order_providers.dart';
 
@@ -88,12 +90,7 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal memuat data awal: $e'),
-            backgroundColor: AppColors.destructive,
-          ),
-        );
+        ErrorHandler.showError(context, e, prefix: 'Gagal memuat data');
       }
     } finally {
       if (mounted) {
@@ -302,12 +299,7 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
                   });
                 } catch (e) {
                   if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Gagal tambah customer: $e'),
-                        backgroundColor: AppColors.destructive,
-                      ),
-                    );
+                    ErrorHandler.showError(context, e, prefix: 'Gagal menambah customer');
                   }
                 }
               },
@@ -322,21 +314,11 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
   Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedCustomer == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Silakan pilih customer terlebih dahulu'),
-          backgroundColor: AppColors.destructive,
-        ),
-      );
+      ErrorHandler.showWarning(context, 'Silakan pilih customer terlebih dahulu');
       return;
     }
     if (_selectedService == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Silakan pilih layanan terlebih dahulu'),
-          backgroundColor: AppColors.destructive,
-        ),
-      );
+      ErrorHandler.showWarning(context, 'Silakan pilih layanan terlebih dahulu');
       return;
     }
 
@@ -359,6 +341,7 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
         );
         ref.invalidate(orderDetailProvider(widget.orderId!));
         ref.invalidate(ordersListProvider);
+        ref.invalidate(calendarOrdersProvider);
         if (mounted) {
           context.pop();
         }
@@ -374,6 +357,7 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
         ref.invalidate(ordersListProvider);
         ref.invalidate(dashboardStatsProvider);
         ref.invalidate(todoTodayProvider);
+        ref.invalidate(calendarOrdersProvider);
         if (mounted) {
           // Replace to newly created order detail screen
           context.pushReplacement('/orders/${newOrder.id}');
@@ -381,12 +365,7 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal menyimpan order: $e'),
-            backgroundColor: AppColors.destructive,
-          ),
-        );
+        ErrorHandler.showError(context, e, prefix: 'Gagal menyimpan order');
       }
     } finally {
       if (mounted) {

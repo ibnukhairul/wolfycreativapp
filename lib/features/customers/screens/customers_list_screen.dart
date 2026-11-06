@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/models/models.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/error_handler.dart';
 import '../providers/customer_providers.dart';
 
 class CustomersListScreen extends ConsumerStatefulWidget {
@@ -84,12 +85,7 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
                 ref.invalidate(customersListProvider);
               } catch (e) {
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Gagal menambah customer: $e'),
-                      backgroundColor: AppColors.destructive,
-                    ),
-                  );
+                  ErrorHandler.showError(context, e, prefix: 'Gagal menambah customer');
                 }
               }
             },
