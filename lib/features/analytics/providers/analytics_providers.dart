@@ -17,18 +17,22 @@ final analyticsRangeProvider =
     NotifierProvider<AnalyticsRangeNotifier, String>(AnalyticsRangeNotifier.new);
 
 final monthlyRevenueProvider =
-    FutureProvider<List<MonthlyRevenueItem>>((ref) async {
+    FutureProvider.autoDispose<List<MonthlyRevenueItem>>((ref) async {
   final repo = ref.watch(analyticsRepositoryProvider);
   final range = ref.watch(analyticsRangeProvider);
   return repo.getMonthlyRevenue(range);
 });
 
-final topServicesProvider = FutureProvider<List<TopServiceItem>>((ref) async {
+final topServicesProvider =
+    FutureProvider.autoDispose<List<TopServiceItem>>((ref) async {
   final repo = ref.watch(analyticsRepositoryProvider);
-  return repo.getTopServices();
+  final range = ref.watch(analyticsRangeProvider);
+  return repo.getTopServices(range);
 });
 
-final topCustomersProvider = FutureProvider<List<TopCustomerItem>>((ref) async {
+final topCustomersProvider =
+    FutureProvider.autoDispose<List<TopCustomerItem>>((ref) async {
   final repo = ref.watch(analyticsRepositoryProvider);
-  return repo.getTopCustomers();
+  final range = ref.watch(analyticsRangeProvider);
+  return repo.getTopCustomers(range);
 });

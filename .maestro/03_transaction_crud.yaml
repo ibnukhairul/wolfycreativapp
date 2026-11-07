@@ -298,7 +298,7 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     direction: DOWN
     timeout: 5000
 - tapOn:
-    rightOf: ".*DP Maestro.*"
+    point: "85%, 86%"
 - extendedWaitUntil:
     visible: "Hapus Pembayaran?"
     timeout: 5000

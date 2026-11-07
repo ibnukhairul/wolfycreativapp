@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -79,6 +80,9 @@ class AnalyticsScreen extends ConsumerWidget {
                           ref
                               .read(analyticsRangeProvider.notifier)
                               .setRange(val);
+                          ref.invalidate(monthlyRevenueProvider);
+                          ref.invalidate(topServicesProvider);
+                          ref.invalidate(topCustomersProvider);
                         }
                       },
                     ),
@@ -168,58 +172,103 @@ class AnalyticsScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(height: 6),
-                          const Text(
-                            'Berdasarkan tanggal pembayaran masuk riil',
-                            style: TextStyle(
+                          Text(
+                            'Berdasarkan tanggal pembayaran masuk riil (${kRangeLabels[currentRange]})',
+                            style: const TextStyle(
                                 fontSize: 11.5, color: AppColors.textMuted),
                           ),
                           const SizedBox(height: 24),
                           SizedBox(
                             height: 200,
-                            child: BarChart(
-                              BarChartData(
-                                maxY: maxRevenue * 1.15,
-                                barGroups: barGroups,
-                                gridData: const FlGridData(show: false),
-                                titlesData: FlTitlesData(
-                                  topTitles: const AxisTitles(
-                                      sideTitles:
-                                          SideTitles(showTitles: false)),
-                                  rightTitles: const AxisTitles(
-                                      sideTitles:
-                                          SideTitles(showTitles: false)),
-                                  leftTitles: const AxisTitles(
-                                      sideTitles:
-                                          SideTitles(showTitles: false)),
-                                  bottomTitles: AxisTitles(
-                                    sideTitles: SideTitles(
-                                      showTitles: true,
-                                      getTitlesWidget: (val, meta) {
-                                        final idx = val.toInt();
-                                        if (idx >= 0 && idx < items.length) {
-                                          final dt = DateTime.tryParse(
-                                                  items[idx].month) ??
-                                              DateTime.now();
-                                          return Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 6),
-                                            child: Text(
-                                              DateFormat('MMM').format(dt),
-                                              style: const TextStyle(
-                                                fontSize: 10.5,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors.textMuted,
-                                              ),
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                final minWidth = constraints.maxWidth;
+                                final neededWidth = items.length * 44.0;
+                                final chartWidth = math.max(minWidth, neededWidth);
+
+                                return SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: SizedBox(
+                                    width: chartWidth,
+                                    height: 200,
+                                    child: BarChart(
+                                      BarChartData(
+                                        maxY: maxRevenue * 1.15,
+                                        barGroups: barGroups,
+                                        gridData: const FlGridData(show: false),
+                                        barTouchData: BarTouchData(
+                                          touchTooltipData: BarTouchTooltipData(
+                                            getTooltipColor: (_) => const Color(0xFF1E1B4B),
+                                            tooltipBorderRadius: BorderRadius.circular(10),
+                                            tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                                              final item = items[group.x];
+                                              final dt = DateTime.tryParse(item.month) ?? DateTime.now();
+                                              return BarTooltipItem(
+                                                '${DateFormat("MMM yyyy").format(dt)}\n',
+                                                const TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Rp${NumberFormat('#,###', 'id_ID').format(rod.toY.toInt())}',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 13,
+                                                      fontWeight: FontWeight.w800,
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        titlesData: FlTitlesData(
+                                          topTitles: const AxisTitles(
+                                              sideTitles:
+                                                  SideTitles(showTitles: false)),
+                                          rightTitles: const AxisTitles(
+                                              sideTitles:
+                                                  SideTitles(showTitles: false)),
+                                          leftTitles: const AxisTitles(
+                                              sideTitles:
+                                                  SideTitles(showTitles: false)),
+                                          bottomTitles: AxisTitles(
+                                            sideTitles: SideTitles(
+                                              showTitles: true,
+                                              getTitlesWidget: (val, meta) {
+                                                final idx = val.toInt();
+                                                if (idx >= 0 && idx < items.length) {
+                                                  final dt = DateTime.tryParse(
+                                                          items[idx].month) ??
+                                                      DateTime.now();
+                                                  final labelPattern = items.length > 12 ? 'MMM yy' : 'MMM';
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(top: 6),
+                                                    child: Text(
+                                                      DateFormat(labelPattern).format(dt),
+                                                      style: const TextStyle(
+                                                        fontSize: 10.5,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: AppColors.textMuted,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                return const SizedBox.shrink();
+                                              },
                                             ),
-                                          );
-                                        }
-                                        return const SizedBox.shrink();
-                                      },
+                                          ),
+                                        ),
+                                        borderData: FlBorderData(show: false),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                borderData: FlBorderData(show: false),
-                              ),
+                                );
+                              },
                             ),
                           ),
                         ],
@@ -242,16 +291,37 @@ class AnalyticsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Padding(
+                      Padding(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-                        child: Text(
-                          'Layanan Terlaris',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textMain,
-                          ),
+                            const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Layanan Terlaris',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textMain,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: AppColors.primarySoft,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                kRangeLabels[currentRange] ?? '',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const Divider(height: 1, color: AppColors.divider),
@@ -358,16 +428,37 @@ class AnalyticsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Padding(
+                      Padding(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-                        child: Text(
-                          'Customer Terbaik',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textMain,
-                          ),
+                            const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Customer Terbaik',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textMain,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: AppColors.statusProses.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                kRangeLabels[currentRange] ?? '',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.statusProses,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const Divider(height: 1, color: AppColors.divider),
@@ -478,7 +569,7 @@ class AnalyticsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _metricCard(String label, String value, Color color) {
+  Widget _metricCard(String label, String value, Color color, [String? sublabel]) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -490,14 +581,28 @@ class AnalyticsScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textMuted,
-              letterSpacing: 0.5,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textMuted,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              if (sublabel != null)
+                Text(
+                  sublabel,
+                  style: TextStyle(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w700,
+                    color: color,
+                  ),
+                ),
+            ],
           ),
           const SizedBox(height: 6),
           Text(

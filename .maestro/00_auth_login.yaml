@@ -36,12 +36,12 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - tapOn:
     below: "Email"
     above: "Password"
-- inputText: "dev@dev.id"
+- inputText: "user@gmail.com"
 
 - tapOn:
     below: "Password"
     above: "Masuk"
-- inputText: "dev234"
+- inputText: "user123"
 
 - takeScreenshot: screenshots/00_login_input_filled
 - tapOn: "Masuk"

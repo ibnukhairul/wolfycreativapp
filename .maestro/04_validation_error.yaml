@@ -75,12 +75,13 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - tapOn:
     below: "Email"
     above: "Password"
-- inputText: "salah@dev.id"
+- inputText: "a@dev.id"
 
 - tapOn:
     below: "Password"
     above: "Masuk"
 - inputText: "passwordsalah"
+- hideKeyboard
 
 - takeScreenshot: screenshots/04_01b_login_wrong_credentials
 - tapOn: "Masuk"
@@ -97,14 +98,14 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     below: "Email"
     above: "Password"
 - eraseText: 30
-- inputText: "dev@dev.id"
+- inputText: "user@gmail.com"
 
 - tapOn:
     below: "Password"
     above: "Masuk"
 - eraseText: 30
-- inputText: "dev234"
-
+- inputText: "user123"
+- hideKeyboard
 - takeScreenshot: screenshots/04_02a_login_valid_filled
 - tapOn: "Masuk"
 
@@ -155,7 +156,8 @@ appId: com.wolfycreativ.wolfycreativ_mobile
     element: "Layanan Master"
     direction: UP
     timeout: 3000
-- tapOn: "Pilih layanan..."
+- tapOn: 
+    below: "Layanan Master"
 - extendedWaitUntil:
     visible: ".*Jersey.*"
     timeout: 5000
@@ -214,10 +216,10 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - tapOn: "Cari invoice, customer, layanan..."
 - inputText: "DATA_TIDAK_VALID_XYZ"
 - extendedWaitUntil:
-    visible: "Tidak ada order ditemukan"
+    visible: ".*Tidak ada order ditemukan.*"
     timeout: 5000
-- assertVisible: "Tidak ada order ditemukan"
-- assertVisible: "Coba ubah filter atau kata kunci pencarian"
+- assertVisible: ".*Tidak ada order ditemukan.*"
+- assertVisible: ".*Coba ubah filter atau kata kunci pencarian.*"
 - takeScreenshot: screenshots/04_31_order_search_not_found
 
 # 3.2 Bersihkan pencarian untuk mengembalikan daftar order
@@ -252,6 +254,7 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - inputText: "0"
 - hideKeyboard
 - tapOn: "Simpan Pembayaran"
+- back
 
 # Harapan: Muncul snackbar validasi 'Nominal harus lebih dari 0'
 - extendedWaitUntil:
@@ -261,7 +264,7 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - takeScreenshot: screenshots/04_41_validation_zero_payment
 
 # Tutup modal pembayaran
-- back
+
 
 # 4.4 Uji Dialog Batal Order: Tekan Batal lalu pilih "Tidak"
 - scrollUntilVisible:
@@ -290,6 +293,7 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - extendedWaitUntil:
     visible: "Daftar Order"
     timeout: 6000
+- hideKeyboard
 
 # ╔════════════════════════════════════════════════════════════════════════╗
 # ║  BAGIAN 5: VALIDASI CUSTOMER (SUBMIT KOSONG & SEARCH NOT FOUND)     ║
@@ -324,9 +328,9 @@ appId: com.wolfycreativ.wolfycreativ_mobile
 - tapOn: "Cari customer, no WA, Instagram..."
 - inputText: "DATA_TIDAK_VALID_XYZ"
 - extendedWaitUntil:
-    visible: "Belum ada customer ditemukan"
+    visible: ".*Belum ada customer ditemukan.*"
     timeout: 5000
-- assertVisible: "Belum ada customer ditemukan"
+- assertVisible: ".*Belum ada customer ditemukan.*"
 - takeScreenshot: screenshots/04_52_customer_search_not_found
 
 # Bersihkan search

@@ -81,6 +81,72 @@ class PersonalMonthlySummary {
   });
 }
 
+class PersonalCategoryReport {
+  final String category;
+  final String type; // 'masuk' | 'keluar'
+  final num total;
+  final int count;
+
+  PersonalCategoryReport({
+    required this.category,
+    required this.type,
+    required this.total,
+    required this.count,
+  });
+}
+
+class PersonalAccountReport {
+  final String accountId;
+  final String accountName;
+  final num masuk;
+  final num keluar;
+  final num net;
+
+  PersonalAccountReport({
+    required this.accountId,
+    required this.accountName,
+    required this.masuk,
+    required this.keluar,
+    required this.net,
+  });
+}
+
+class PersonalDailyFlow {
+  final String date;
+  final num masuk;
+  final num keluar;
+
+  PersonalDailyFlow({
+    required this.date,
+    required this.masuk,
+    required this.keluar,
+  });
+}
+
+class PersonalMonthlyReportData {
+  final String monthKey;
+  final num totalMasuk;
+  final num totalKeluar;
+  final num net;
+  final int count;
+  final List<PersonalCategoryReport> byCategory;
+  final List<PersonalAccountReport> byAccount;
+  final List<PersonalDailyFlow> dailyFlow;
+  final List<PersonalTransactionModel> transactions;
+
+  PersonalMonthlyReportData({
+    required this.monthKey,
+    required this.totalMasuk,
+    required this.totalKeluar,
+    required this.net,
+    required this.count,
+    required this.byCategory,
+    required this.byAccount,
+    required this.dailyFlow,
+    required this.transactions,
+  });
+}
+
 class PersonalFinanceRepository {
   final SupabaseClient _client;
 
@@ -233,6 +299,116 @@ class PersonalFinanceRepository {
       totalMasuk: masuk,
       totalKeluar: keluar,
       categories: catList,
+    );
+  }
+
+  /// Get comprehensive monthly report matching web version
+  Future<PersonalMonthlyReportData> getMonthlyReport(DateTime monthDate) async {
+    final monthKey = DateFormat('yyyy-MM').format(monthDate);
+    final start = DateFormat('yyyy-MM-01').format(monthDate);
+    final lastDay = DateTime(monthDate.year, monthDate.month + 1, 0);
+    final end = DateFormat('yyyy-MM-dd').format(lastDay);
+
+    final response = await _client
+        .from('personal_transactions')
+        .select('*, account:personal_accounts(name)')
+        .gte('trx_date', start)
+        .lte('trx_date', end)
+        .order('trx_date', ascending: true)
+        .order('created_at', ascending: true);
+
+    final txList = (response as List<dynamic>)
+        .map((t) => PersonalTransactionModel.fromJson(t as Map<String, dynamic>))
+        .toList();
+
+    final Map<String, ({String name, num masuk, num keluar})> accountMap = {};
+    final Map<String, ({String type, num total, int count})> categoryMap = {};
+    final Map<String, ({num masuk, num keluar})> dailyMap = {};
+
+    num totalMasuk = 0;
+    num totalKeluar = 0;
+
+    for (final t in txList) {
+      final amt = t.amount;
+      final accId = t.accountId;
+      final accName = t.accountName ?? '—';
+
+      // Account activity (includes transfer)
+      final prevAcc = accountMap[accId] ?? (name: accName, masuk: 0, keluar: 0);
+      if (t.type == 'masuk') {
+        accountMap[accId] = (name: accName, masuk: prevAcc.masuk + amt, keluar: prevAcc.keluar);
+      } else {
+        accountMap[accId] = (name: accName, masuk: prevAcc.masuk, keluar: prevAcc.keluar + amt);
+      }
+
+      // Totals & Categories (exclude transfer)
+      if (!t.isTransfer) {
+        if (t.type == 'masuk') {
+          totalMasuk += amt;
+        } else {
+          totalKeluar += amt;
+        }
+
+        final catKey = '${t.type}::${t.category}';
+        final prevCat = categoryMap[catKey] ?? (type: t.type, total: 0, count: 0);
+        categoryMap[catKey] = (
+          type: t.type,
+          total: prevCat.total + amt,
+          count: prevCat.count + 1,
+        );
+      }
+
+      // Daily flow (exclude transfer)
+      final prevDay = dailyMap[t.trxDate] ?? (masuk: 0, keluar: 0);
+      if (!t.isTransfer) {
+        if (t.type == 'masuk') {
+          dailyMap[t.trxDate] = (masuk: prevDay.masuk + amt, keluar: prevDay.keluar);
+        } else {
+          dailyMap[t.trxDate] = (masuk: prevDay.masuk, keluar: prevDay.keluar + amt);
+        }
+      }
+    }
+
+    final byAccount = accountMap.entries
+        .map((e) => PersonalAccountReport(
+              accountId: e.key,
+              accountName: e.value.name,
+              masuk: e.value.masuk,
+              keluar: e.value.keluar,
+              net: e.value.masuk - e.value.keluar,
+            ))
+        .toList()
+      ..sort((a, b) => (b.masuk + b.keluar).compareTo(a.masuk + a.keluar));
+
+    final byCategory = categoryMap.entries
+        .map((e) => PersonalCategoryReport(
+              category: e.key.split('::')[1],
+              type: e.value.type,
+              total: e.value.total,
+              count: e.value.count,
+            ))
+        .toList()
+      ..sort((a, b) => b.total.compareTo(a.total));
+
+    final dailyFlow = dailyMap.entries
+        .map((e) => PersonalDailyFlow(
+              date: e.key,
+              masuk: e.value.masuk,
+              keluar: e.value.keluar,
+            ))
+        .toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
+
+    return PersonalMonthlyReportData(
+      monthKey: monthKey,
+      totalMasuk: totalMasuk,
+      totalKeluar: totalKeluar,
+      net: totalMasuk - totalKeluar,
+      count: txList.length,
+      byCategory: byCategory,
+      byAccount: byAccount,
+      dailyFlow: dailyFlow,
+      transactions: txList,
     );
   }
 }

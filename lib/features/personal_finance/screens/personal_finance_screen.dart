@@ -11,6 +11,7 @@ import '../../../core/utils/date_formatter.dart';
 import '../../../core/utils/error_handler.dart';
 import '../providers/personal_finance_providers.dart';
 import '../repositories/personal_finance_repository.dart';
+import '../widgets/monthly_infographic_card.dart';
 
 const List<String> kPersonalCategorySuggestions = [
   'Gaji',
@@ -111,6 +112,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
     ref.invalidate(personalAccountsProvider);
     ref.invalidate(personalTransactionsProvider);
     ref.invalidate(personalMonthlySummaryProvider);
+    ref.invalidate(personalMonthlyReportProvider);
   }
 
   void _showAddTransactionModal([PersonalAccountModel? defaultAccount]) {
@@ -931,9 +933,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  hideBalance
-                                      ? 'Rp••••••••'
-                                      : formatCurrency(s.totalMasuk),
+                                  formatCurrency(s.totalMasuk),
                                   style: AppTheme.monoStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
@@ -969,9 +969,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  hideBalance
-                                      ? 'Rp••••••••'
-                                      : formatCurrency(s.totalKeluar),
+                                  formatCurrency(s.totalKeluar),
                                   style: AppTheme.monoStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
@@ -1036,9 +1034,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                         ),
                                       ),
                                       Text(
-                                        hideBalance
-                                            ? 'Rp••••••••'
-                                            : formatCurrency(cat.total),
+                                        formatCurrency(cat.total),
                                         style: AppTheme.monoStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w700,
@@ -1071,6 +1067,10 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                   loading: () => const SizedBox.shrink(),
                   error: (e, _) => const SizedBox.shrink(),
                 ),
+                const SizedBox(height: 20),
+
+                // 3c. Laporan Bulanan & Infografis Keuangan
+                MonthlyInfographicCard(hideBalance: false),
                 const SizedBox(height: 20),
 
                 // 4. Riwayat Transaksi Pribadi (PRD §6.12)

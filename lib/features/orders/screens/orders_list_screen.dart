@@ -114,6 +114,7 @@ class _OrdersListScreenState extends ConsumerState<OrdersListScreen> {
     final ordersAsync = ref.watch(ordersListProvider);
     final selectedPeriod = ref.watch(orderPeriodFilterProvider);
     final selectedStatus = ref.watch(orderStatusFilterProvider);
+    final selectedPayment = ref.watch(orderPaymentFilterProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -221,6 +222,30 @@ class _OrdersListScreenState extends ConsumerState<OrdersListScreen> {
                         onTap: () => ref.read(orderStatusFilterProvider.notifier).setStatus(st),
                       ),
                     ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 6),
+
+            // Payment Filter Chips
+            SizedBox(
+              height: 34,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  _PaymentFilterChip(
+                    label: 'Semua Pembayaran',
+                    isSelected: selectedPayment == null,
+                    onTap: () => ref.read(orderPaymentFilterProvider.notifier).setFilter(null),
+                  ),
+                  const SizedBox(width: 8),
+                  _PaymentFilterChip(
+                    label: 'Belum Lunas',
+                    isSelected: selectedPayment == 'belum_lunas',
+                    activeColor: const Color(0xFFF59E0B),
+                    onTap: () => ref.read(orderPaymentFilterProvider.notifier).setFilter('belum_lunas'),
                   ),
                 ],
               ),
@@ -375,6 +400,47 @@ class _StatusFilterChip extends StatelessWidget {
           label,
           style: TextStyle(
             color: isSelected ? effectiveColor : AppColors.textMuted,
+            fontSize: 11.5,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PaymentFilterChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final Color activeColor;
+
+  const _PaymentFilterChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    this.activeColor = AppColors.primary,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? activeColor.withValues(alpha: 0.1) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? activeColor : AppColors.border,
+            width: isSelected ? 1.5 : 0.8,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? activeColor : AppColors.textMuted,
             fontSize: 11.5,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
