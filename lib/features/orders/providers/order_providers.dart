@@ -40,6 +40,17 @@ final orderStatusFilterProvider =
     NotifierProvider<OrderStatusFilterNotifier, OrderStatus?>(
         OrderStatusFilterNotifier.new);
 
+// Filter: payment status (null = semua, 'belum_lunas' = belum bayar + DP)
+class OrderPaymentFilterNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+  void setFilter(String? val) => state = val;
+}
+
+final orderPaymentFilterProvider =
+    NotifierProvider<OrderPaymentFilterNotifier, String?>(
+        OrderPaymentFilterNotifier.new);
+
 class OrderSortByNotifier extends Notifier<String> {
   @override
   String build() => 'latest';
@@ -56,13 +67,21 @@ final ordersListProvider = FutureProvider<List<OrderModel>>((ref) async {
   final period = ref.watch(orderPeriodFilterProvider);
   final status = ref.watch(orderStatusFilterProvider);
   final sortBy = ref.watch(orderSortByProvider);
+  final paymentFilter = ref.watch(orderPaymentFilterProvider);
 
-  return repo.getOrders(
+  var list = await repo.getOrders(
     search: search,
     period: period,
     status: status,
     sortBy: sortBy,
   );
+
+  // Client-side payment filter: belum_lunas = Belum Bayar + DP
+  if (paymentFilter == 'belum_lunas') {
+    list = list.where((o) => !o.isLunas).toList();
+  }
+
+  return list;
 });
 
 // Order detail family provider

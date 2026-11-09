@@ -11,9 +11,11 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/error_handler.dart';
 import '../../../core/utils/invoice_text_generator.dart';
 import '../../../core/widgets/payment_badge.dart';
 import '../../../core/widgets/status_badge.dart';
+import '../../calendar/screens/calendar_screen.dart';
 import '../providers/order_providers.dart';
 
 class OrderDetailScreen extends ConsumerStatefulWidget {
@@ -34,6 +36,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     ref.invalidate(orderPaymentsProvider(widget.orderId));
     ref.invalidate(orderFilesProvider(widget.orderId));
     ref.invalidate(ordersListProvider);
+    ref.invalidate(calendarOrdersProvider);
   }
 
   Future<void> _handleStatusChange(OrderStatus newStatus) async {
@@ -69,12 +72,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
       _refreshAll();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal mengubah status: $e'),
-            backgroundColor: AppColors.destructive,
-          ),
-        );
+        ErrorHandler.showError(context, e, prefix: 'Gagal mengubah status');
       }
     }
   }
@@ -229,12 +227,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                               final amount =
                                   num.tryParse(amountController.text) ?? 0;
                               if (amount <= 0) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Nominal harus lebih dari 0'),
-                                    backgroundColor: AppColors.destructive,
-                                  ),
-                                );
+                                ErrorHandler.showWarning(context, 'Nominal harus lebih dari 0');
                                 return;
                               }
 
@@ -255,14 +248,8 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                                     );
                                 _refreshAll();
                               } catch (e) {
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content:
-                                          Text('Gagal catat pembayaran: $e'),
-                                      backgroundColor: AppColors.destructive,
-                                    ),
-                                  );
+                                if (context.mounted) {
+                                  ErrorHandler.showError(context, e, prefix: 'Gagal mencatat pembayaran');
                                 }
                               } finally {
                                 if (mounted) {
@@ -301,12 +288,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
       _refreshAll();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal upload preview: $e'),
-            backgroundColor: AppColors.destructive,
-          ),
-        );
+        ErrorHandler.showError(context, e, prefix: 'Gagal mengunggah preview');
       }
     } finally {
       if (mounted) setState(() => _isActionLoading = false);
@@ -331,12 +313,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
       _refreshAll();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal upload final: $e'),
-            backgroundColor: AppColors.destructive,
-          ),
-        );
+        ErrorHandler.showError(context, e, prefix: 'Gagal mengunggah file final');
       }
     } finally {
       if (mounted) setState(() => _isActionLoading = false);
@@ -389,6 +366,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                     .read(orderRepositoryProvider)
                     .deleteOrder(widget.orderId);
                 ref.invalidate(ordersListProvider);
+                ref.invalidate(calendarOrdersProvider);
                 if (context.mounted) {
                   context.pop();
                 }
@@ -914,11 +892,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                 child: OutlinedButton.icon(
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: invoiceText));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Teks invoice berhasil disalin ke clipboard!'),
-                      ),
-                    );
+                    ErrorHandler.showSuccess(context, 'Teks invoice berhasil disalin!');
                   },
                   icon: const Icon(Icons.copy_rounded, size: 16),
                   label: const Text('Salin Teks'),

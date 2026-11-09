@@ -64,30 +64,26 @@ class AnalyticsRepository {
 
   AnalyticsRepository(this._client);
 
-  /// Fetch monthly aggregated revenue and order counts separated across tables (PRD §6.7)
-  Future<List<MonthlyRevenueItem>> getMonthlyRevenue(String range) async {
+  DateTime? _getStartDate(String range) {
     final now = DateTime.now();
-    DateTime? startDate;
-
     switch (range) {
       case '3m':
-        startDate = DateTime(now.year, now.month - 2, 1);
-        break;
+        return DateTime(now.year, now.month - 2, 1);
       case '6m':
-        startDate = DateTime(now.year, now.month - 5, 1);
-        break;
+        return DateTime(now.year, now.month - 5, 1);
       case '12m':
-        startDate = DateTime(now.year, now.month - 11, 1);
-        break;
+        return DateTime(now.year, now.month - 11, 1);
       case 'ytd':
-        startDate = DateTime(now.year, 1, 1);
-        break;
+        return DateTime(now.year, 1, 1);
       case 'all':
       default:
-        startDate = null;
-        break;
+        return null;
     }
+  }
 
+  /// Fetch monthly aggregated revenue and order counts separated across tables (PRD §6.7)
+  Future<List<MonthlyRevenueItem>> getMonthlyRevenue(String range) async {
+    final startDate = _getStartDate(range);
     final startStr = startDate != null
         ? DateFormat('yyyy-MM-dd').format(startDate)
         : null;
@@ -133,29 +129,136 @@ class AnalyticsRepository {
     }).toList();
   }
 
-  /// Top services from v_top_services
-  Future<List<TopServiceItem>> getTopServices() async {
-    final response = await _client
-        .from('v_top_services')
-        .select('*')
-        .order('total_order', ascending: false)
-        .limit(5);
+  /// Top services aggregated according to the selected date range
+  Future<List<TopServiceItem>> getTopServices([String range = '12m']) async {
+    final startDate = _getStartDate(range);
+    final startStr = startDate != null
+        ? DateFormat('yyyy-MM-dd').format(startDate)
+        : null;
 
-    return (response as List<dynamic>)
-        .map((s) => TopServiceItem.fromJson(s as Map<String, dynamic>))
-        .toList();
+    var query = _client.from('orders').select('''
+      id,
+      order_date,
+      services (name),
+      payments (amount)
+    ''');
+
+    if (startStr != null) {
+      query = query.gte('order_date', startStr);
+    }
+
+    final response = await query;
+    final Map<String, ({int totalOrder, num totalRevenue})> map = {};
+
+    for (final o in response as List<dynamic>) {
+      final s = o['services'] as Map<String, dynamic>?;
+      if (s == null) continue;
+      final serviceName = s['name'] as String? ?? 'Lainnya';
+
+      final payments = o['payments'] as List<dynamic>? ?? [];
+      num orderPaid = 0;
+      for (final p in payments) {
+        orderPaid += (p['amount'] as num? ?? 0);
+      }
+
+      final current = map[serviceName] ?? (totalOrder: 0, totalRevenue: 0);
+      map[serviceName] = (
+        totalOrder: current.totalOrder + 1,
+        totalRevenue: current.totalRevenue + orderPaid,
+      );
+    }
+
+    final list = map.entries.map((e) {
+      return TopServiceItem(
+        serviceName: e.key,
+        totalOrder: e.value.totalOrder,
+        totalRevenue: e.value.totalRevenue,
+      );
+    }).toList();
+
+    list.sort((a, b) {
+      final cmp = b.totalOrder.compareTo(a.totalOrder);
+      if (cmp != 0) return cmp;
+      return b.totalRevenue.compareTo(a.totalRevenue);
+    });
+
+    return list.take(5).toList();
   }
 
-  /// Top customers from v_top_customers
-  Future<List<TopCustomerItem>> getTopCustomers() async {
-    final response = await _client
-        .from('v_top_customers')
-        .select('*')
-        .order('total_spent', ascending: false)
-        .limit(5);
+  /// Top customers aggregated according to the selected date range
+  Future<List<TopCustomerItem>> getTopCustomers([String range = '12m']) async {
+    final startDate = _getStartDate(range);
+    final startStr = startDate != null
+        ? DateFormat('yyyy-MM-dd').format(startDate)
+        : null;
 
-    return (response as List<dynamic>)
-        .map((c) => TopCustomerItem.fromJson(c as Map<String, dynamic>))
-        .toList();
+    var query = _client.from('orders').select('''
+      id,
+      order_date,
+      customers (id, name),
+      payments (amount)
+    ''');
+
+    if (startStr != null) {
+      query = query.gte('order_date', startStr);
+    }
+
+    final response = await query;
+    final Map<String, ({String name, int totalOrder, num totalSpent, String? lastOrderDate})> map = {};
+
+    for (final o in response as List<dynamic>) {
+      final c = o['customers'] as Map<String, dynamic>?;
+      if (c == null) continue;
+      final custId = c['id'] as String;
+      final custName = c['name'] as String? ?? 'Customer';
+      final orderDate = o['order_date'] as String?;
+
+      final payments = o['payments'] as List<dynamic>? ?? [];
+      num orderPaid = 0;
+      for (final p in payments) {
+        orderPaid += (p['amount'] as num? ?? 0);
+      }
+
+      final current = map[custId];
+      if (current == null) {
+        map[custId] = (
+          name: custName,
+          totalOrder: 1,
+          totalSpent: orderPaid,
+          lastOrderDate: orderDate,
+        );
+      } else {
+        String? latestDate = current.lastOrderDate;
+        if (orderDate != null) {
+          if (latestDate == null || orderDate.compareTo(latestDate) > 0) {
+            latestDate = orderDate;
+          }
+        }
+        map[custId] = (
+          name: custName,
+          totalOrder: current.totalOrder + 1,
+          totalSpent: current.totalSpent + orderPaid,
+          lastOrderDate: latestDate,
+        );
+      }
+    }
+
+    final list = map.entries.map((e) {
+      return TopCustomerItem(
+        id: e.key,
+        name: e.value.name,
+        totalOrder: e.value.totalOrder,
+        totalSpent: e.value.totalSpent,
+        lastOrderDate: e.value.lastOrderDate,
+      );
+    }).toList();
+
+    list.sort((a, b) {
+      final cmp = b.totalSpent.compareTo(a.totalSpent);
+      if (cmp != 0) return cmp;
+      return b.totalOrder.compareTo(a.totalOrder);
+    });
+
+    return list.take(5).toList();
   }
 }

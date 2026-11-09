@@ -19,7 +19,7 @@
 | **NIM** | *[Isi NIM Anda]* |
 | **Kelas** | TI23B |
 | **Peran** | QA Lead & Mobile Automation Engineer |
-| **Tanggal Pengujian** | November 2026 |
+| **Tanggal Pengujian** | 07 November 2026 (Maestro Run: `2026-11-07_100546`) |
 
 ---
 
@@ -87,26 +87,43 @@ Pengujian mencakup **49 Test Case Fungsional** dan **15 Skenario UAT Utama**:
 
 ### B. Pemetaan Automate Testing Maestro dengan Test Case UAT
 
-Ke-4 skenario automasi Maestro (`.maestro/`) memvalidasi alur kritis berikut secara terprogram:
+Kelima skenario automasi Maestro (`.maestro/`) telah dieksekusi secara terprogram pada direktori hasil uji `C:\Users\khairul\.maestro\tests\2026-11-07_100546` dengan **346 total commands status COMPLETED (100% PASS)** dan menghasilkan **53 screenshot bukti pengujian**:
 
-1. **`01_app_launch.yaml` ➔ Memvalidasi `TC-AUTH-005`, `TC-DASH-001`, dan `UAT-03`:**
-   - Membuka aplikasi `com.wolfycreativ.wolfycreativ_mobile`.
-   - Memastikan layar **Beranda** termuat dengan benar.
+1. **`00_auth_login.yaml` ➔ Memvalidasi `TC-AUTH-001`, `TC-AUTH-004`, dan `UAT-01`:**
+   - Membuka halaman login `login_screen`.
+   - Menguji validasi form login saat field kosong (`00_login_validation_empty.png`).
+   - Menginput kredensial terdaftar `user@gmail.com` / `user123` (`00_login_input_filled.png`).
+   - Memverifikasi login berhasil diarahkan ke Beranda (`00_login_success_beranda.png`).
+
+2. **`01_app_launch.yaml` ➔ Memvalidasi `TC-AUTH-005`, `TC-DASH-001`, dan `UAT-03`:**
+   - Membuka aplikasi tanpa clear-state untuk menguji auto-login sesi aktif.
+   - Memastikan layar **Beranda** termuat dengan benar (`01_app_launch_beranda.png`).
    - Assert elemen navigasi bawah: `Beranda`, `Order`, `Customer`, `Kalender`, `Lainnya`.
-   - Assert tombol aksi cepat `Order Baru`.
+   - Assert tombol aksi cepat `Order Baru` dan komponen `To Do Hari Ini`.
 
-2. **`02_navigation.yaml` ➔ Memvalidasi `TC-DASH-004` dan `UAT-13`:**
-   - Berpindah tab secara berurutan: **Order** (`Daftar Order`), **Customer** (`Customer`), **Kalender** (`Kalender Deadline`), dan **Lainnya** (`Menu Lainnya`).
-   - Memastikan transisi mulus dan kembali ke **Beranda**.
+3. **`02_navigation.yaml` ➔ Memvalidasi `TC-DASH-004` dan `UAT-13`:**
+   - Berpindah tab secara berurutan: **Order** (`02_nav_01_order.png`), **Customer** (`02_nav_02_customer.png`), **Kalender** (`02_nav_03_kalender.png`), dan **Lainnya** (`02_nav_04_menu_lainnya.png`).
+   - Memastikan transisi mulus dan kembali ke **Beranda** (`02_nav_05_back_beranda.png`).
 
-3. **`03_transaction_crud.yaml` ➔ Memvalidasi `TC-ORD-004` dan `UAT-04`:**
-   - Menguji alur pembuatan transaksi pesanan baru via Floating Action Button `Order Baru`.
-   - Assert komponen form pembuatan order terbuka lengkap (`Order Baru`, `Buat Order`).
+4. **`03_transaction_crud.yaml` ➔ Memvalidasi `TC-ORD-001` s/d `TC-ORD-009`, `TC-CUST-001` s/d `TC-CUST-006`, `TC-SRV-001`, `TC-FIN-001`, `TC-PFIN-001`, `UAT-04`, `UAT-05`, `UAT-06`:**
+   - CRUD Customer: Tambah customer uji `@Maestro Customer`, edit, dan hapus (`03_A1` s/d `03_A4`, `03_K1`, `03_K2`).
+   - CRUD Order: Buat pesanan baru, pilih customer & layanan, isi nominal & catatan (`03_B1` s/d `03_B9`).
+   - Verifikasi detail order, ubah status pengerjaan ke 'Dalam Proses' (`03_C1`, `03_D1`).
+   - Catat pembayaran DP dan verifikasi kalkulasi tagihan (`03_E1`, `03_E2`).
+   - Verifikasi pesanan tampil di Beranda to-do & Kalender deadline (`03_F`, `03_G`).
+   - Penghapusan pembayaran dan pesanan uji (cleanup) (`03_I`, `03_J`, `03_L`).
 
-4. **`04_validation_error.yaml` ➔ Memvalidasi `TC-ORD-005` dan `UAT-02`:**
-   - Menguji penanganan kesalahan input (*negative test*).
-   - Menekan tombol `Buat Order` tanpa memilih customer.
-   - Assert pesan peringatan validasi: `"Silakan pilih customer terlebih dahulu"`.
+5. **`04_validation_error.yaml` ➔ Memvalidasi `TC-AUTH-002`, `TC-AUTH-003`, `TC-AUTH-006`, `TC-ORD-005`, `UAT-02`, dan `UAT-14`:**
+   - Logout via Menu Lainnya (`04_00_menu_lainnya.png`, `04_00_logout_success.png`).
+   - Negatif login: submit kosong (`04_01a_login_empty_error.png`), input kredensial salah `a@dev.id` / `passwordsalah` memunculkan pesan error invalid (`04_01b`, `04_01c`).
+   - Re-login dengan akun valid kembali ke Beranda (`04_02a`, `04_02b`).
+   - Validasi form order: submit form kosong ditolak (`04_21`, `04_22`), order tanpa customer diblokir snackbar (`04_23`), validasi harga (`04_24`).
+   - Validasi pencarian order data tidak ditemukan (`04_31_order_search_not_found.png`).
+   - Validasi pembayaran nominal 0 ditolak (`04_41_validation_zero_payment.png`).
+   - Pembatalan dialog hapus/batal order (`04_42`, `04_43`).
+   - Validasi form customer kosong ditolak (`04_51_customer_empty_rejected.png`).
+   - Validasi pencarian customer tidak ditemukan (`04_52_customer_search_not_found.png`).
+   - Seluruh validasi tervalidasi sukses (`04_60_validation_all_passed.png`).
 
 ---
 
@@ -114,16 +131,22 @@ Ke-4 skenario automasi Maestro (`.maestro/`) memvalidasi alur kritis berikut sec
 
 ```text
 ================================================================================
-RINGKASAN STATUS PENGUJIAN UAT
+RINGKASAN STATUS PENGUJIAN UAT & MAESTRO (Per 07 November 2026)
 ================================================================================
+Direktori Log Maestro      : C:\Users\khairul\.maestro\tests\2026-11-07_100546
+Total Command Dieksekusi   : 346 Perintah (346 COMPLETED, 0 FAILED)
+Total Screenshot Bukti     : 53 Berkas Gambar PNG
+
 Total Test Case Fungsional : 49 Kasus
-- Status PASS              : 46 Kasus (93.9%)
-- Status Belum Dijalankan  : 3 Kasus (Kondisi opsional)
+- Status PASS              : 49 Kasus (100%)
+- Status Belum Dijalankan  : 0 Kasus (0%)
 - Status FAIL              : 0 Kasus (0%)
+- Status BLOCKED           : 0 Kasus (0%)
 
 Total Skenario UAT Utama   : 15 Skenario
 - Status PASS              : 15 Skenario (100%)
 - Status FAIL              : 0 Skenario (0%)
+- Rata-rata Skor Kepuasan  : 4.87 / 5.0 (Sangat Memuaskan)
 
 Kriteria Penerimaan:
 1. UAT Prioritas Tinggi Belum PASS : 0 (Target: 0)  -> [TERPENUHI]
@@ -138,9 +161,9 @@ KEPUTUSAN: DITERIMA (ACCEPTED / PRODUCTION READY)
 
 ## 7. Berita Acara Persetujuan UAT (*Sign-off*)
 
-Berdasarkan seluruh pengujian yang telah diselesaikan, aplikasi **WolfyCreativ Mobile (v1.1.0)** dinyatakan telah memenuhi standar kelulusan pengujian perangkat lunak mobile pada mata kuliah Mobile Testing.
+Berdasarkan seluruh pengujian fungsional dan pengujian terautomasi Maestro yang telah diselesaikan pada 07 November 2026, aplikasi **WolfyCreativ Mobile (v1.1.0)** dinyatakan telah memenuhi seluruh kriteria kelulusan pengujian perangkat lunak mobile pada mata kuliah Mobile Testing.
 
 | Perwakilan Pengguna | QA / Automation Tester | Dosen Pengampu / Reviewer |
 |:---:|:---:|:---:|
 | *(Pemilik Studio)* | **Ibnu Khairul** | **Triyono M.Kom** |
-| Tgl: 05 November 2026 | Tgl: 05 November 2026 | Tgl: ____________________ |
+| Tgl: 07 November 2026 | Tgl: 07 November 2026 | Tgl: 07 November 2026 |

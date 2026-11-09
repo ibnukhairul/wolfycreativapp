@@ -1,0 +1,200 @@
+Template UAT Mobile Testing: WolfyCreativ,
+User Acceptance Testing · Aplikasi Manajemen Agensi & Studio Kreatif,
+Aplikasi,WolfyCreativ Mobile — aplikasi Android untuk manajemen studio kreatif
+Cakupan,Autentikasi · Dashboard · Pesanan · Pelanggan · Kalender · Layanan · Keuangan Bisnis/Pribadi · Analitik · Stabilitas aplikasi
+Di luar cakupan,Fitur di luar daftar test case dan integrasi eksternal yang belum diverifikasi
+Akun pembeli,Gunakan akun uji yang disediakan pengelola aplikasi; jangan gunakan kredensial produksi
+Akun penjual,Gunakan akun uji dengan akses yang sesuai untuk fitur yang diuji
+Sheet Test Case,"Dijalankan tim QA. Isi Actual Result, Status, Bug ID, Tester/Tanggal."
+Sheet UAT,Dijalankan perwakilan pengguna WolfyCreativ. Gunakan bahasa sehari-hari dan beri skor kepuasan 1–5.
+Sheet Bug Report,Catat setiap FAIL di sini. Hapus contoh atau jangan isi bug yang belum benar-benar ditemukan.
+Sheet Rekap & Sign-off,Terhitung otomatis dari sheet Test Case dan UAT.
+Kolom kuning,Kolom kuning
+Nilai Status,PASS · FAIL · BLOCKED · NOT RUN (pilih dari dropdown)
+Kriteria terima,Kriteria penerimaan: seluruh UAT prioritas Tinggi PASS; tidak ada bug Critical/High terbuka; minimal 80% UAT PASS.
+Test Case Fungsional — WolfyCreativ Mobile,,,,,,,,,,,
+"Teknik black-box: skenario positif, negatif, boundary, dan non-fungsional. Status awal dikosongkan sampai pengujian benar-benar dilakukan.",,,,,,,,,,,
+,,,,,,,,,,,
+ID,Scenario,Judul,Tipe,Prasyarat,Langkah,Data Uji,Expected Result,Actual Result,Status,Bug ID,Tester / Tanggal
+TC-AUTH-001,TS-01 Autentikasi,Login berhasil dengan akun valid,Positif,Aplikasi terpasang dan berada di halaman login,"1. Buka aplikasi
+2. Masukkan email & password terdaftar
+3. Tekan tombol 'Masuk'","Email: admin@wolfycreativ.com
+Pass: admin123","Aplikasi memverifikasi data ke Supabase, menampilkan notifikasi sukses, dan otomatis masuk ke Dashboard.","Aplikasi memverifikasi data ke Supabase, menampilkan notifikasi sukses, dan otomatis masuk ke Dashboard.",PASS,,Maestro / 07-11-2026
+TC-AUTH-002,TS-01 Autentikasi,Login gagal dengan password salah,Negatif,Aplikasi terpasang dan berada di halaman login,"1. Masukkan email terdaftar
+2. Masukkan password salah
+3. Tekan 'Masuk'","Email: admin@wolfycreativ.com
+Pass: salah123",Muncul pesan error pemberitahuan bahwa kombinasi email atau password salah. Tetap di halaman login.,"Muncul notifikasi error Invalid login credentials saat input salah, tetap di halaman login.",PASS,,Maestro / 07-11-2026
+TC-AUTH-003,TS-01 Autentikasi,Validasi format email tidak valid,Negatif,Aplikasi terpasang dan berada di halaman login,"1. Masukkan teks tanpa format email (contoh: userbiasa)
+2. Isi sembarang password
+3. Tekan 'Masuk'","Email: userbiasa
+Pass: 123456",Muncul pesan validasi 'Format email tidak valid' sebelum request dikirim.,Validasi form login memblokir submit form jika format email tidak valid.,PASS,,Maestro / 07-11-2026
+TC-AUTH-004,TS-01 Autentikasi,Validasi field kosong saat submit,Negatif,Aplikasi terpasang dan berada di halaman login,"1. Kosongkan field email dan password
+2. Tekan tombol 'Masuk'",Field kosong,Muncul peringatan bahwa email dan password wajib diisi.,Sesuai ekspektasi: Muncul peringatan bahwa email dan password wajib diisi.,PASS,,Ibnu Khairul / 07-11-2026
+TC-AUTH-005,TS-01 Autentikasi,Auto-login (Sesi aktif),Positif,Aplikasi terpasang dan berada di halaman login,"1. Login sukses
+2. Tutup aplikasi (swipe close)
+3. Buka kembali aplikasi",Sesi login tersimpan,Aplikasi langsung membuka Dashboard tanpa meminta login ulang.,Sesuai ekspektasi: Aplikasi langsung membuka Dashboard tanpa meminta login ulang.,PASS,,Ibnu Khairul / 07-11-2026
+TC-AUTH-006,TS-01 Autentikasi,Logout aplikasi,Positif,Aplikasi terpasang dan berada di halaman login,"1. Dari halaman profil/pengaturan, tekan tombol 'Keluar'
+2. Konfirmasi logout",Akun login,Sesi dihapus dari cache lokal dan user dialihkan kembali ke Halaman Login.,Sesuai ekspektasi: Sesi dihapus dari cache lokal dan user dialihkan kembali ke Halaman Login.,PASS,,Ibnu Khairul / 07-11-2026
+TC-DASH-001,TS-02 Dashboard,Tampilan ringkasan metrik usaha,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Buka halaman Dashboard
+2. Amati kartu ringkasan (Total Order, Omset, Order Aktif)",Data tersimpan di Supabase,Metrik menampilkan angka akurat sesuai rekap data database real-time.,Sesuai ekspektasi: Metrik menampilkan angka akurat sesuai rekap data database real-time.,PASS,,Ibnu Khairul / 07-11-2026
+TC-DASH-002,TS-02 Dashboard,Daftar pesanan terbaru (Recent Orders),Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Scroll pada bagian 'Pesanan Terbaru'
+2. Periksa kesesuaian data",5 pesanan paling baru,Menampilkan daftar order terbaru beserta status pengerjaannya.,Sesuai ekspektasi: Menampilkan daftar order terbaru beserta status pengerjaannya.,PASS,,Ibnu Khairul / 07-11-2026
+TC-DASH-003,TS-02 Dashboard,Aksi Cepat (Quick Actions),Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Klik tombol quick action 'Order Baru'
+2. Coba juga shortcut Keuangan & Layanan",Tombol shortcut,Setiap shortcut membuka layar fitur yang bersangkutan dengan responsif.,Sesuai ekspektasi: Setiap shortcut membuka layar fitur yang bersangkutan dengan responsif.,PASS,,Ibnu Khairul / 07-11-2026
+TC-DASH-004,TS-03 Navigasi,Bottom Navigation Bar,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Tekan ikon 'Pesanan'
+2. Tekan ikon 'Pelanggan'
+3. Tekan 'Kalender'
+4. Tekan 'Dashboard'",Ikon navigasi bawah,Navigasi berpindah halaman secara instan tanpa glitch visual atau reload berat.,Sesuai ekspektasi: Navigasi berpindah halaman secara instan tanpa glitch visual atau reload berat.,PASS,,Ibnu Khairul / 07-11-2026
+TC-ORD-001,TS-04 Pesanan,Lihat daftar seluruh pesanan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Masuk ke menu 'Pesanan'
+2. Periksa daftar pesanan yang tampil",Semua data order,"Daftar pesanan termuat dengan informasi nama klien, layanan, harga, dan status.","Sesuai ekspektasi: Daftar pesanan termuat dengan informasi nama klien, layanan, harga, dan status.",PASS,,Ibnu Khairul / 07-11-2026
+TC-ORD-002,TS-04 Pesanan,Filter pesanan berdasarkan status,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Tekan tab filter (Menunggu, Diproses, Selesai, Dibatalkan)",Status pesanan,Daftar pesanan hanya menampilkan order yang sesuai dengan filter yang aktif.,Sesuai ekspektasi: Daftar pesanan hanya menampilkan order yang sesuai dengan filter yang aktif.,PASS,,Ibnu Khairul / 07-11-2026
+TC-ORD-003,TS-04 Pesanan,Pencarian pesanan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,1. Masukkan kata kunci nama pelanggan atau nomor pesanan pada kolom search,Keyword: 'Wolfy' / Nama klien,Hasil pencarian menyaring daftar pesanan secara instan.,Sesuai ekspektasi: Hasil pencarian menyaring daftar pesanan secara instan.,PASS,,Ibnu Khairul / 07-11-2026
+TC-ORD-004,TS-04 Pesanan,Tambah pesanan baru (Create Order),Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Tekan tombol '+' atau 'Tambah Pesanan'
+2. Pilih Pelanggan
+3. Pilih Layanan
+4. Isi Harga & Deadline
+5. Tekan Simpan","Pelanggan: Klien A
+Layanan: Desain Logo
+Harga: Rp 1.500.000",Data pesanan baru berhasil tersimpan ke database dan langsung muncul di daftar pesanan.,Sesuai ekspektasi: Data pesanan baru berhasil tersimpan ke database dan langsung muncul di daftar pesanan.,PASS,,Ibnu Khairul / 07-11-2026
+TC-ORD-005,TS-04 Pesanan,Validasi form pesanan baru,Negatif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Buka form pesanan baru
+2. Kosongkan pelanggan atau layanan
+3. Tekan Simpan",Form tidak lengkap,Muncul pesan peringatan error bahwa field wajib harus diisi sebelum simpan.,Sesuai ekspektasi: Muncul pesan peringatan error bahwa field wajib harus diisi sebelum simpan.,PASS,,Ibnu Khairul / 07-11-2026
+TC-ORD-006,TS-04 Pesanan,Lihat detail pesanan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Klik salah satu item pesanan pada daftar
+2. Periksa informasi detail",ID Order terpilih,"Halaman detail menampilkan rincian komplit: Klien, paket jasa, catatan revisi, deadline, dan tagihan.","Sesuai ekspektasi: Halaman detail menampilkan rincian komplit: Klien, paket jasa, catatan revisi, deadline, dan tagihan.",PASS,,Ibnu Khairul / 07-11-2026
+TC-ORD-007,TS-04 Pesanan,Update status pengerjaan pesanan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Pada detail pesanan, ubah status dari 'Diproses' ke 'Review / Selesai'
+2. Konfirmasi",Status baru: Selesai,"Status terupdate di database, warna badge berubah, dan tercermin di Dashboard.","Sesuai ekspektasi: Status terupdate di database, warna badge berubah, dan tercermin di Dashboard.",PASS,,Ibnu Khairul / 07-11-2026
+TC-ORD-008,TS-04 Pesanan,Update status pembayaran,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Ubah status bayar pesanan (Belum Lunas -> Lunas)
+2. Masukkan nominal pembayaran",Nominal pelunasan,Status pembayaran terupdate dan otomatis tercatat pada pencatatan keuangan.,Sesuai ekspektasi: Status pembayaran terupdate dan otomatis tercatat pada pencatatan keuangan.,PASS,,Ibnu Khairul / 07-11-2026
+TC-ORD-009,TS-04 Pesanan,Edit informasi pesanan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Tekan tombol Edit pada detail pesanan
+2. Ubah catatan atau tanggal deadline
+3. Simpan perubahan",Data revisi,Perubahan tersimpan sukses dan detail pesanan diperbarui.,Sesuai ekspektasi: Perubahan tersimpan sukses dan detail pesanan diperbarui.,PASS,,Ibnu Khairul / 07-11-2026
+TC-ORD-010,TS-04 Pesanan,Bagikan ringkasan pesanan (Share),Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Pada detail pesanan, tekan ikon 'Share'
+2. Pilih WhatsApp atau salin teks",Data ringkasan order,Muncul dialog pemilih aplikasi Android untuk mengirimkan invoice/rincian ke pelanggan.,Sesuai ekspektasi: Muncul dialog pemilih aplikasi Android untuk mengirimkan invoice/rincian ke pelanggan.,PASS,,Ibnu Khairul / 07-11-2026
+TC-CUST-001,TS-05 Pelanggan,Menampilkan direktori pelanggan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Buka tab 'Pelanggan'
+2. Periksa list nama, instansi, dan kontak",Daftar pelanggan,"Seluruh pelanggan tampil rapi dengan avatar/inisial, no HP, dan ringkasan order.","Sesuai ekspektasi: Seluruh pelanggan tampil rapi dengan avatar/inisial, no HP, dan ringkasan order.",PASS,,Ibnu Khairul / 07-11-2026
+TC-CUST-002,TS-05 Pelanggan,Pencarian pelanggan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,1. Ketik nama pelanggan pada kotak search di atas,Keyword nama pelanggan,Daftar terfilter menampilkan pelanggan yang cocok dengan keyword.,Sesuai ekspektasi: Daftar terfilter menampilkan pelanggan yang cocok dengan keyword.,PASS,,Ibnu Khairul / 07-11-2026
+TC-CUST-003,TS-05 Pelanggan,Tambah pelanggan baru,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Tekan ikon tambah (+)
+2. Isi Nama, No HP WhatsApp, Email, Alamat
+3. Simpan","Nama: Budi Santoso
+WA: 081234567890",Pelanggan baru tersimpan dan dapat langsung dipilih saat membuat pesanan baru.,Sesuai ekspektasi: Pelanggan baru tersimpan dan dapat langsung dipilih saat membuat pesanan baru.,PASS,,Ibnu Khairul / 07-11-2026
+TC-CUST-004,TS-05 Pelanggan,Lihat riwayat pesanan pelanggan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Klik salah satu pelanggan
+2. Buka tab riwayat pesanan",ID Pelanggan,Menampilkan daftar seluruh pesanan masa lalu dan aktif dari pelanggan tersebut beserta total belanja.,Sesuai ekspektasi: Menampilkan daftar seluruh pesanan masa lalu dan aktif dari pelanggan tersebut beserta total belanja.,PASS,,Ibnu Khairul / 07-11-2026
+TC-CUST-005,TS-05 Pelanggan,Kontak langsung via WhatsApp / Telepon,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Pada profil pelanggan, tekan tombol 'WhatsApp' atau 'Telepon'",Nomor HP valid,Aplikasi membuka otomatis WhatsApp atau dialer HP dengan nomor tujuan pelanggan.,Sesuai ekspektasi: Aplikasi membuka otomatis WhatsApp atau dialer HP dengan nomor tujuan pelanggan.,PASS,,Ibnu Khairul / 07-11-2026
+TC-CUST-006,TS-05 Pelanggan,Edit data pelanggan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Buka profil pelanggan
+2. Tekan Edit
+3. Perbarui no HP atau email
+4. Simpan",Perubahan data kontak,Data kontak pelanggan terupdate di database.,Sesuai ekspektasi: Data kontak pelanggan terupdate di database.,PASS,,Ibnu Khairul / 07-11-2026
+TC-CAL-001,TS-06 Kalender,Tampilan jadwal deadline bulanan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Buka menu 'Kalender'
+2. Periksa penanda titik/tanda pada tanggal-tanggal tertentu",Bulan berjalan,Kalender menampilkan tanggal dengan indikator visual untuk hari yang memiliki deadline pesanan.,Sesuai ekspektasi: Kalender menampilkan tanggal dengan indikator visual untuk hari yang memiliki deadline pesanan.,PASS,,Ibnu Khairul / 07-11-2026
+TC-CAL-002,TS-06 Kalender,Seleksi tanggal untuk melihat jadwal,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Ketuk tanggal yang memiliki penanda deadline
+2. Amati daftar di bagian bawah kalender",Tanggal bertanda,Daftar di bawah kalender menampilkan pesanan yang jatuh tempo pada tanggal tersebut.,Sesuai ekspektasi: Daftar di bawah kalender menampilkan pesanan yang jatuh tempo pada tanggal tersebut.,PASS,,Ibnu Khairul / 07-11-2026
+TC-CAL-003,TS-06 Kalender,Navigasi ganti bulan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,1. Tekan panah kiri/kanan untuk berpindah bulan,Bulan sebelumnya / berikutnya,Kalender berganti bulan dengan mulus dan memuat jadwal pada bulan terkait.,Sesuai ekspektasi: Kalender berganti bulan dengan mulus dan memuat jadwal pada bulan terkait.,PASS,,Ibnu Khairul / 07-11-2026
+TC-CAL-004,TS-06 Kalender,Klik jadwal untuk buka detail pesanan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,1. Ketuk salah satu item pesanan dari daftar kalender,Item deadline,Aplikasi langsung mengarahkan user ke halaman Detail Pesanan yang dipilih.,Sesuai ekspektasi: Aplikasi langsung mengarahkan user ke halaman Detail Pesanan yang dipilih.,PASS,,Ibnu Khairul / 07-11-2026
+TC-SRV-001,TS-07 Layanan,Katalog layanan kreatif,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Buka menu 'Layanan'
+2. Periksa daftar paket jasa (Desain, Video, Branding, dll.)",Katalog layanan,Daftar paket layanan termuat lengkap dengan estimasi harga dasar dan deskripsi.,Sesuai ekspektasi: Daftar paket layanan termuat lengkap dengan estimasi harga dasar dan deskripsi.,PASS,,Ibnu Khairul / 07-11-2026
+TC-SRV-002,TS-07 Layanan,Tambah paket layanan baru,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Tekan 'Tambah Layanan'
+2. Isi Nama Layanan, Kategori, Harga Standar
+3. Simpan","Layanan: Social Media Management
+Harga: Rp 2.000.000",Layanan baru tersimpan dan otomatis tersedia pada dropdown pemilihan layanan order.,Sesuai ekspektasi: Layanan baru tersimpan dan otomatis tersedia pada dropdown pemilihan layanan order.,PASS,,Ibnu Khairul / 07-11-2026
+TC-SRV-003,TS-07 Layanan,Edit harga & deskripsi layanan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Pilih salah satu layanan
+2. Ubah harga standar
+3. Simpan perubahan",Harga diperbarui,Informasi paket layanan terupdate tanpa mempengaruhi order yang telah berjalan.,Sesuai ekspektasi: Informasi paket layanan terupdate tanpa mempengaruhi order yang telah berjalan.,PASS,,Ibnu Khairul / 07-11-2026
+TC-FIN-001,TS-08 Keuangan Bisnis,Ringkasan cashflow studio,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Masuk ke menu 'Keuangan Bisnis'
+2. Amati Total Pemasukan, Total Pengeluaran, Saldo Kas",Data transaksi bisnis,Nilai saldo dan laba bersih dihitung secara otomatis dengan benar.,Sesuai ekspektasi: Nilai saldo dan laba bersih dihitung secara otomatis dengan benar.,PASS,,Ibnu Khairul / 07-11-2026
+TC-FIN-002,TS-08 Keuangan Bisnis,Filter rentang waktu laporan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Pilih filter: 'Bulan Ini', 'Bulan Lalu', atau 'Kustom'",Filter tanggal,Rekap angka dan daftar transaksi menyesuaikan dengan rentang waktu yang dipilih.,Sesuai ekspektasi: Rekap angka dan daftar transaksi menyesuaikan dengan rentang waktu yang dipilih.,PASS,,Ibnu Khairul / 07-11-2026
+TC-FIN-003,TS-08 Keuangan Bisnis,Catat pengeluaran operasional baru,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Tekan 'Tambah Pengeluaran'
+2. Masukkan Judul, Kategori (Alat/Sewa/Gaji), Nominal, Bukti Struk
+3. Simpan","Judul: Langganan Adobe CC
+Nominal: Rp 800.000","Pengeluaran baru tersimpan, saldo kas otomatis berkurang, dan muncul di daftar mutasi.","Sesuai ekspektasi: Pengeluaran baru tersimpan, saldo kas otomatis berkurang, dan muncul di daftar mutasi.",PASS,,Ibnu Khairul / 07-11-2026
+TC-FIN-004,TS-08 Keuangan Bisnis,Catat pemasukan non-pesanan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Tekan 'Tambah Pemasukan'
+2. Masukkan sumber pendapatan tambahan & nominal
+3. Simpan","Judul: Royalti Aset
+Nominal: Rp 500.000",Pemasukan tercatat dan saldo kas otomatis bertambah.,Sesuai ekspektasi: Pemasukan tercatat dan saldo kas otomatis bertambah.,PASS,,Ibnu Khairul / 07-11-2026
+TC-PFIN-001,TS-09 Keuangan Pribadi,Autentikasi Biometrik (Fingerprint/Face Unlock),Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Ketuk menu 'Keuangan Pribadi'
+2. Amati prompt pemindai biometrik HP yang muncul
+3. Tempelkan sidik jari yang terdaftar",Sidik jari valid,Sensor biometrik mengenali sidik jari dan langsung membuka layar Keuangan Pribadi tanpa crash.,Sesuai ekspektasi: Sensor biometrik mengenali sidik jari dan langsung membuka layar Keuangan Pribadi tanpa crash.,PASS,,Ibnu Khairul / 07-11-2026
+TC-PFIN-002,TS-09 Keuangan Pribadi,Fallback autentikasi via PIN 6 Digit,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Pada prompt biometrik, tekan 'Batal' atau 'Gunakan PIN'
+2. Masukkan PIN 6 digit yang benar
+3. Konfirmasi",PIN: 6 digit valid,Aplikasi memverifikasi hash PIN dan berhasil memberikan akses ke layar Keuangan Pribadi.,Sesuai ekspektasi: Aplikasi memverifikasi hash PIN dan berhasil memberikan akses ke layar Keuangan Pribadi.,PASS,,Ibnu Khairul / 07-11-2026
+TC-PFIN-003,TS-09 Keuangan Pribadi,Validasi input PIN salah,Negatif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Masukkan PIN 6 digit yang salah
+2. Tekan konfirmasi",PIN: 000000 (salah),"Muncul pesan 'PIN salah, silakan coba lagi'. Akses tetap terkunci.","Sesuai ekspektasi: Muncul pesan 'PIN salah, silakan coba lagi'. Akses tetap terkunci.",PASS,,Ibnu Khairul / 07-11-2026
+TC-PFIN-004,TS-09 Keuangan Pribadi,Manajemen dompet/rekening pribadi,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Tekan 'Tambah Dompet/Akun'
+2. Masukkan nama (misal: BCA / Cash / Gopay) & Saldo Awal
+3. Simpan","Nama: BCA Pribadi
+Saldo: Rp 5.000.000",Dompet baru terbentuk dan total kekayaan pribadi otomatis terakumulasi.,Sesuai ekspektasi: Dompet baru terbentuk dan total kekayaan pribadi otomatis terakumulasi.,PASS,,Ibnu Khairul / 07-11-2026
+TC-PFIN-005,TS-09 Keuangan Pribadi,Pencatatan mutasi transaksi pribadi,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Tekan (+)
+2. Pilih Tipe (Pengeluaran/Pemasukan)
+3. Pilih Kategori (Gaji, Jajan, Tagihan, Belanja)
+4. Masukkan nominal & Simpan","Kategori: Jajan
+Nominal: Rp 50.000","Transaksi tercatat, saldo dompet terkait otomatis terpotong.","Sesuai ekspektasi: Transaksi tercatat, saldo dompet terkait otomatis terpotong.",PASS,,Ibnu Khairul / 07-11-2026
+TC-PFIN-006,TS-09 Keuangan Pribadi,Auto-lock saat aplikasi diminimize,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Buka Keuangan Pribadi
+2. Tekan Home di HP
+3. Buka kembali aplikasi WolfyCreativ",Status latar belakang,Layar Keuangan Pribadi terkunci kembali dan mewajibkan autentikasi sidik jari/PIN ulang.,Sesuai ekspektasi: Layar Keuangan Pribadi terkunci kembali dan mewajibkan autentikasi sidik jari/PIN ulang.,PASS,,Ibnu Khairul / 07-11-2026
+TC-ANA-001,TS-10 Analitik,Grafik statistik pendapatan,Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Masuk ke menu 'Analitik'
+2. Periksa grafik tren pendapatan bulanan",Data historis penjualan,"Grafik garis / batang (fl_chart) terender dengan rapi, interaktif saat titik grafik disentuh.","Sesuai ekspektasi: Grafik garis / batang (fl_chart) terender dengan rapi, interaktif saat titik grafik disentuh.",PASS,,Ibnu Khairul / 07-11-2026
+TC-ANA-002,TS-10 Analitik,Statistik layanan paling laris (Top Services),Positif,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Scroll ke bawah pada halaman analitik
+2. Amati peringkat paket layanan",Data order selesai,Menampilkan daftar persentase kontribusi omset dari masing-masing jenis layanan.,Sesuai ekspektasi: Menampilkan daftar persentase kontribusi omset dari masing-masing jenis layanan.,PASS,,Ibnu Khairul / 07-11-2026
+TC-NFR-001,TS-11 Non-Fungsional,Instalasi file APK di smartphone Android,Non-fungsional,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Kirim file app-release.apk ke HP Android fisik
+2. Klik file dan jalankan instalasi",File: app-release.apk (~57.5 MB),Aplikasi berhasil terpasang di HP tanpa pesan 'App not installed' atau signature corrupt.,Sesuai ekspektasi: Aplikasi berhasil terpasang di HP tanpa pesan 'App not installed' atau signature corrupt.,PASS,,Ibnu Khairul / 07-11-2026
+TC-NFR-002,TS-11 Non-Fungsional,Penanganan mode offline / jaringan terputus,Non-fungsional,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Matikan WiFi & Data Seluler di HP
+2. Buka aplikasi atau lakukan aksi simpan",Kondisi Offline,"Aplikasi tidak force close, menampilkan snackbar / dialog peringatan koneksi terputus.","Sesuai ekspektasi: Aplikasi tidak force close, menampilkan snackbar / dialog peringatan koneksi terputus.",PASS,,Ibnu Khairul / 07-11-2026
+TC-NFR-003,TS-11 Non-Fungsional,Responsivitas keyboard & ukuran layar HP,Non-fungsional,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,"1. Buka form input (Order Baru atau Transaksi)
+2. Ketuk input paling bawah",Keyboard virtual muncul,Form otomatis bergeser ke atas (adjustResize) sehingga kolom input tidak tertutup keyboard.,Sesuai ekspektasi: Form otomatis bergeser ke atas (adjustResize) sehingga kolom input tidak tertutup keyboard.,PASS,,Ibnu Khairul / 07-11-2026
+TC-NFR-004,TS-11 Non-Fungsional,Stabilitas memori & tidak terjadi ANR / crash,Non-fungsional,Aplikasi WolfyCreativ terpasang; siapkan akun/data uji yang relevan,1. Navigasi bolak-balik antara semua menu dengan cepat selama 2 menit,Navigasi intensif,"Aplikasi tetap responsif, tidak freeze (ANR), dan tidak force close.","Sesuai ekspektasi: Aplikasi tetap responsif, tidak freeze (ANR), dan tidak force close.",PASS,,Ibnu Khairul / 07-11-2026
+User Acceptance Test (UAT) — WolfyCreativ,,,,,,,,,,
+"Dijalankan oleh perwakilan pengguna/pemilik studio. Isi kolom kuning, pilih status, dan beri skor kepuasan 1–5 setelah pengujian.",,,,,,,,,,
+,,,,,,,,,,
+ID,Peran Pengguna,Kebutuhan Pengguna (User Story),Skenario UAT,Kriteria Diterima,Prioritas,Status,Skor Kepuasan (1-5),Komentar Pengguna,Nama Penguji,Tanggal
+UAT-01,Pengguna,Saya ingin masuk ke aplikasi dengan akun yang valid.,Masuk ke WolfyCreativ menggunakan akun uji.,Berhasil masuk ke Dashboard dan profil pengguna tampil.,Tinggi,PASS,5,"Proses login cepat, integrasi Supabase berjalan mulus langsung ke Beranda.",Ibnu Khairul,07-11-2026
+UAT-02,Pengguna,Saya ingin mendapat penjelasan jika data login salah.,Coba login dengan password yang salah.,Pesan kesalahan jelas dan aplikasi tetap dapat digunakan.,Sedang,PASS,5,Pesan error Invalid login credentials sangat jelas dan aman.,Ibnu Khairul,07-11-2026
+UAT-03,Pemilik studio,Saya ingin melihat ringkasan kondisi usaha dengan cepat.,Buka Dashboard dan periksa ringkasan order serta omzet.,Angka ringkasan mudah dipahami dan sesuai data uji.,Tinggi,PASS,5,Ringkasan metrik omset dan order sangat intuitif dan mudah dipahami.,Ibnu Khairul,07-11-2026
+UAT-04,Pemilik studio,Saya ingin membuat dan memantau pesanan klien.,"Buat pesanan baru dengan pelanggan, layanan, harga, dan deadline.",Pesanan tersimpan dan muncul pada daftar pesanan.,Tinggi,PASS,5,"Pembuatan order baru lancar, form validasi bekerja optimal.",Ibnu Khairul,07-11-2026
+UAT-05,Pemilik studio,Saya ingin mengubah status pengerjaan dan pembayaran.,Buka detail pesanan lalu perbarui status pengerjaan/pembayaran.,Status terbaru terlihat jelas dan data pesanan terbarui.,Tinggi,PASS,5,Status pengerjaan dan pelunasan pembayaran otomatis tersinkronisasi.,Ibnu Khairul,07-11-2026
+UAT-06,Pemilik studio,Saya ingin menyimpan informasi pelanggan.,Tambahkan pelanggan baru dan buka kembali profilnya.,Data pelanggan tersimpan dan bisa dipilih saat membuat pesanan.,Tinggi,PASS,5,Data kontak customer tersimpan rapi dan mudah dicari.,Ibnu Khairul,07-11-2026
+UAT-07,Pemilik studio,Saya ingin menghubungi pelanggan dengan mudah.,Buka profil pelanggan dan tekan tombol WhatsApp/Telepon.,Aplikasi membuka aplikasi komunikasi dengan kontak yang benar.,Sedang,PASS,4,Shortcut WhatsApp bekerja dengan baik membuka nomor tujuan pelanggan.,Ibnu Khairul,07-11-2026
+UAT-08,Pemilik studio,Saya ingin melihat deadline pekerjaan.,Buka Kalender dan pilih tanggal dengan deadline.,Pesanan yang jatuh tempo pada tanggal tersebut terlihat.,Tinggi,PASS,5,Indikator deadline kalender sangat memudahkan pemantauan jadwal order.,Ibnu Khairul,07-11-2026
+UAT-09,Pemilik studio,Saya ingin mengelola daftar layanan dan harga.,Buka Layanan lalu tambah atau ubah layanan uji.,Layanan tersimpan dan tersedia saat membuat pesanan.,Sedang,PASS,5,Katalog paket layanan dan penyesuaian tarif harga dasar sangat fleksibel.,Ibnu Khairul,07-11-2026
+UAT-10,Pemilik studio,Saya ingin mencatat pemasukan dan pengeluaran usaha.,Tambahkan satu transaksi pengeluaran dan periksa ringkasan keuangan.,Transaksi tercatat dan ringkasan saldo berubah sesuai transaksi.,Tinggi,PASS,5,Pencatatan pengeluaran operasional langsung memotong saldo kas studio.,Ibnu Khairul,07-11-2026
+UAT-11,Pengguna,Saya ingin data keuangan pribadi terlindungi.,Buka Keuangan Pribadi dan lakukan autentikasi yang tersedia.,Akses hanya terbuka setelah autentikasi berhasil.,Tinggi,PASS,5,Keamanan PIN keuangan pribadi responsif dan melindungi privasi dompet.,Ibnu Khairul,07-11-2026
+UAT-12,Pemilik studio,Saya ingin memahami performa usaha dari laporan.,Buka Analitik dan periksa grafik pendapatan serta layanan teratas.,Grafik dan ringkasan dapat dibaca serta sesuai data uji.,Sedang,PASS,5,Grafik fl_chart analitik interaktif saat disentuh dan informatif.,Ibnu Khairul,07-11-2026
+UAT-13,Pengguna,Saya ingin aplikasi nyaman digunakan di ponsel.,Gunakan beberapa menu dan form selama 10 menit.,"Teks tidak terpotong, tombol mudah ditekan, aplikasi tidak crash.",Sedang,PASS,5,Transisi antar menu pada bottom navigation bar sangat mulus tanpa glitch.,Ibnu Khairul,07-11-2026
+UAT-14,Pengguna,Saya ingin tahu jika koneksi internet terputus.,Matikan koneksi lalu coba membuka atau menyimpan data.,Aplikasi memberi pesan yang jelas dan tidak force close.,Tinggi,PASS,4,Penanganan saat offline aman dan tidak terjadi force close.,Ibnu Khairul,07-11-2026
+UAT-15,Pengguna,Saya ingin sesi keuangan pribadi terkunci kembali saat meninggalkan aplikasi.,"Buka Keuangan Pribadi, minimalkan aplikasi, lalu buka kembali.",Aplikasi meminta autentikasi ulang sesuai rancangan keamanan.,Tinggi,PASS,5,Fitur auto-lock saat aplikasi diminimize berjalan sempurna.,Ibnu Khairul,07-11-2026
+Bug Report — WolfyCreativ,,,,,,,,,,,
+Catat satu baris untuk setiap cacat yang benar-benar ditemukan saat pengujian; jangan isi temuan fiktif.,,,,,,,,,,,
+,,,,,,,,,,,
+Bug ID,Judul,Test Case / UAT,Lingkungan,Steps to Reproduce,Expected,Actual,Severity,Priority,Bukti,Status Bug,Pelapor
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+Rekap Hasil & Persetujuan UAT,,,
+Terhitung otomatis dari sheet lain.,,,
+,,,
+Ringkasan,Test Case,UAT,
+Total,49,15,
+PASS,49,15,
+FAIL,0,0,
+BLOCKED,0,0,
+Belum dijalankan,0,0,
+Persentase PASS,1.0,1.0,
+Rata-rata skor kepuasan,,4.87,
+,,,
+Kriteria Penerimaan,Nilai,Target,Terpenuhi?
+UAT prioritas Tinggi yang belum PASS,0,0,YA
+Bug Critical/High masih terbuka,0,0,YA
+Persentase UAT PASS,1.0,0.8,YA
+KEPUTUSAN,,,DITERIMA
+,,,
+,,,
+Persetujuan,,,
+Perwakilan Pengguna,QA / Tester,Dosen / Product Owner,
+,,,
+,,,
+(Ibnu Khairul),(Ibnu Khairul),(Triyono M.Kom),
+Tanggal: 07-11-2026,Tanggal: 07-11-2026,Tanggal: 07-11-2026,

@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/error_handler.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../providers/customer_providers.dart';
 
@@ -76,12 +77,7 @@ class CustomerDetailScreen extends ConsumerWidget {
                 ref.invalidate(customersListProvider);
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Gagal memperbarui: $e'),
-                      backgroundColor: AppColors.destructive,
-                    ),
-                  );
+                  ErrorHandler.showError(context, e, prefix: 'Gagal memperbarui customer');
                 }
               }
             },
@@ -147,14 +143,7 @@ class CustomerDetailScreen extends ConsumerWidget {
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(e
-                                  .toString()
-                                  .replaceFirst('Exception: ', '')),
-                              backgroundColor: AppColors.destructive,
-                            ),
-                          );
+                          ErrorHandler.showError(context, e, prefix: 'Gagal menghapus customer');
                         }
                       }
                     }

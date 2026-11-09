@@ -8,18 +8,44 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/error_handler.dart';
 import '../providers/personal_finance_providers.dart';
 import '../repositories/personal_finance_repository.dart';
+import '../widgets/monthly_infographic_card.dart';
 
-const List<String> kPersonalCategorySuggestions = [
+const List<String> kPersonalIncomeCategories = [
   'Gaji',
+  'Order Desain',
   'Freelance',
+  'Service',
+  'Bonus',
+  'Pemasukan Lainnya',
+];
+
+const List<String> kPersonalExpenseCategories = [
+  'Tempat Tinggal',
+  'Makan',
   'Jajan',
-  'Belanja',
-  'Transport',
-  'Tagihan',
-  'Nabung',
-  'Lainnya',
+  'Belanja Kebutuhan',
+  'Transportasi',
+  'Kendaraan',
+  'Sepeda',
+  'Komunikasi',
+  'Kesehatan',
+  'Pendidikan',
+  'Ibadah & Sosial',
+  'Kebutuhan Pribadi',
+  'Hiburan & Rekreasi',
+  'Peralatan',
+  'Langganan',
+  // Operasional WolfyCreativ
+  'Honor Freelancer',
+  'Marketing Usaha',
+  'Produksi',
+  'Software & Aplikasi',
+  'Perlengkapan Kerja',
+  'Operasional Usaha Lainnya',
+  'Pengeluaran Lainnya',
 ];
 
 class PersonalFinanceScreen extends ConsumerStatefulWidget {
@@ -110,12 +136,13 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
     ref.invalidate(personalAccountsProvider);
     ref.invalidate(personalTransactionsProvider);
     ref.invalidate(personalMonthlySummaryProvider);
+    ref.invalidate(personalMonthlyReportProvider);
   }
 
   void _showAddTransactionModal([PersonalAccountModel? defaultAccount]) {
     String type = 'keluar';
     PersonalAccountModel? selectedAcc = defaultAccount;
-    String category = kPersonalCategorySuggestions.first;
+    final categoryCtrl = TextEditingController();
     final amountCtrl = TextEditingController();
     final noteCtrl = TextEditingController();
     DateTime trxDate = DateTime.now();
@@ -136,6 +163,15 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                 accountsAsync.whenData((accs) {
                   selectedAcc ??= accs.firstOrNull;
                 });
+
+                // Saran kategori mengikuti tipe transaksi (sama seperti web)
+                final suggestions = type == 'masuk'
+                    ? kPersonalIncomeCategories
+                    : kPersonalExpenseCategories;
+                final query = categoryCtrl.text.trim().toLowerCase();
+                final filteredSuggestions = suggestions
+                    .where((c) => query.isEmpty || c.toLowerCase().contains(query))
+                    .toList();
 
                 return SafeArea(
                   child: Container(
@@ -186,7 +222,10 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                               ],
                               selected: {type},
                               onSelectionChanged: (set) {
-                                setModalState(() => type = set.first);
+                                setModalState(() {
+                                  type = set.first;
+                                  categoryCtrl.clear(); // reset saat ganti tipe
+                                });
                               },
                             ),
                             const SizedBox(height: 14),
@@ -217,21 +256,52 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                             ),
                             const SizedBox(height: 14),
 
-                            // Kategori
+                            // Kategori (input bebas + saran sesuai tipe, seperti web)
                             const Text('Kategori',
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600, fontSize: 13)),
                             const SizedBox(height: 6),
-                            DropdownButtonFormField<String>(
-                              initialValue: category,
-                              decoration: const InputDecoration(),
-                              items: kPersonalCategorySuggestions.map((c) {
-                                return DropdownMenuItem(value: c, child: Text(c));
-                              }).toList(),
-                              onChanged: (val) {
-                                if (val != null) setModalState(() => category = val);
-                              },
+                            TextField(
+                              controller: categoryCtrl,
+                              textCapitalization: TextCapitalization.words,
+                              decoration: InputDecoration(
+                                hintText: type == 'masuk'
+                                    ? 'Pilih kategori pemasukan'
+                                    : 'Pilih kategori pengeluaran',
+                              ),
+                              onChanged: (_) => setModalState(() {}),
                             ),
+                            const SizedBox(height: 8),
+                            if (filteredSuggestions.isNotEmpty)
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(maxHeight: 128),
+                                child: SingleChildScrollView(
+                                  child: Wrap(
+                                    spacing: 6,
+                                    runSpacing: 0,
+                                    children: filteredSuggestions.map((c) {
+                                      final isSelected =
+                                          categoryCtrl.text.trim() == c;
+                                      return ChoiceChip(
+                                        label: Text(
+                                          c,
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                        selected: isSelected,
+                                        visualDensity: VisualDensity.compact,
+                                        onSelected: (_) {
+                                          setModalState(() {
+                                            categoryCtrl.text = c;
+                                            categoryCtrl.selection =
+                                                TextSelection.collapsed(
+                                                    offset: c.length);
+                                          });
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ),
                             const SizedBox(height: 14),
 
                             // Nominal
@@ -242,7 +312,6 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                             TextField(
                               controller: amountCtrl,
                               keyboardType: TextInputType.number,
-                              autofocus: true,
                               style: AppTheme.monoStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
@@ -262,7 +331,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                             TextField(
                               controller: noteCtrl,
                               decoration: const InputDecoration(
-                                hintText: 'Kopi, makan siang, gaji bulanan...',
+                                hintText: 'Misal: makan siang',
                               ),
                             ),
                             const SizedBox(height: 14),
@@ -314,6 +383,12 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                             ElevatedButton(
                               onPressed: () async {
                                 final amount = num.tryParse(amountCtrl.text) ?? 0;
+                                final category = categoryCtrl.text.trim();
+                                if (category.isEmpty) {
+                                  ErrorHandler.showWarning(
+                                      context, 'Kategori wajib diisi');
+                                  return;
+                                }
                                 if (amount <= 0 || selectedAcc == null) return;
                                 Navigator.pop(ctx);
 
@@ -334,12 +409,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                   _refreshAll();
                                 } catch (e) {
                                   if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Gagal catat transaksi: $e'),
-                                        backgroundColor: AppColors.destructive,
-                                      ),
-                                    );
+                                    ErrorHandler.showError(context, e, prefix: 'Gagal mencatat transaksi');
                                   }
                                 }
                               },
@@ -547,12 +617,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                 final amount = num.tryParse(amountCtrl.text) ?? 0;
                                 if (amount <= 0 || fromAcc == null || toAcc == null) return;
                                 if (fromAcc!.id == toAcc!.id) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Dompet asal dan tujuan tidak boleh sama!'),
-                                      backgroundColor: AppColors.destructive,
-                                    ),
-                                  );
+                                  ErrorHandler.showWarning(context, 'Dompet asal dan tujuan tidak boleh sama!');
                                   return;
                                 }
 
@@ -573,12 +638,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                   _refreshAll();
                                 } catch (e) {
                                   if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Gagal transfer: $e'),
-                                        backgroundColor: AppColors.destructive,
-                                      ),
-                                    );
+                                    ErrorHandler.showError(context, e, prefix: 'Gagal melakukan transfer');
                                   }
                                 }
                               },
@@ -661,9 +721,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                     _refreshAll();
                   } catch (e) {
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Gagal hapus: $e'), backgroundColor: AppColors.destructive),
-                      );
+                      ErrorHandler.showError(context, e, prefix: 'Gagal menghapus dompet');
                     }
                   }
                 }
@@ -688,9 +746,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                 _refreshAll();
               } catch (e) {
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Gagal: $e'), backgroundColor: AppColors.destructive),
-                  );
+                  ErrorHandler.showError(context, e, prefix: 'Gagal menyimpan dompet');
                 }
               }
             },
@@ -949,9 +1005,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  hideBalance
-                                      ? 'Rp••••••••'
-                                      : formatCurrency(s.totalMasuk),
+                                  formatCurrency(s.totalMasuk),
                                   style: AppTheme.monoStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
@@ -987,9 +1041,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  hideBalance
-                                      ? 'Rp••••••••'
-                                      : formatCurrency(s.totalKeluar),
+                                  formatCurrency(s.totalKeluar),
                                   style: AppTheme.monoStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
@@ -1054,9 +1106,7 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                                         ),
                                       ),
                                       Text(
-                                        hideBalance
-                                            ? 'Rp••••••••'
-                                            : formatCurrency(cat.total),
+                                        formatCurrency(cat.total),
                                         style: AppTheme.monoStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w700,
@@ -1089,6 +1139,10 @@ class _PersonalFinanceScreenState extends ConsumerState<PersonalFinanceScreen> {
                   loading: () => const SizedBox.shrink(),
                   error: (e, _) => const SizedBox.shrink(),
                 ),
+                const SizedBox(height: 20),
+
+                // 3c. Laporan Bulanan & Infografis Keuangan
+                MonthlyInfographicCard(hideBalance: false),
                 const SizedBox(height: 20),
 
                 // 4. Riwayat Transaksi Pribadi (PRD §6.12)
