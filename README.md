@@ -9,11 +9,10 @@
 
 ## 📋 1. Identitas Pengembang & Proyek
 
-* **Nama Mahasiswa:** Ibnu Khairul
-* **NIM:** *[Isi NIM Anda]*
+* **Nama Mahasiswa:** IBNU KHAIRUL HUDA
+* **NIM:** *230103227*
 * **Kelas:** TI23B
 * **Program Studi:** S1 Teknik Informatika
-* **Peran:** Fullstack Mobile Developer & QA Automation Tester
 * **Repositori Git:** [https://github.com/ibnukhairul/wolfycreativ_mobile](https://github.com/ibnukhairul/wolfycreativ_mobile)
 * **Tautan Video Penjelasan (5–10 Menit):** *[Isi Tautan YouTube / Google Drive Anda]*
 
