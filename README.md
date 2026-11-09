@@ -13,7 +13,7 @@
 * **NIM:** *230103227*
 * **Kelas:** TI23B
 * **Program Studi:** S1 Teknik Informatika
-* **Repositori Git:** [https://github.com/ibnukhairul/wolfycreativ_mobile](https://github.com/ibnukhairul/wolfycreativ_mobile)
+* **Repositori Git:** [https://github.com/ibnukhairul/wolfycreativ_mobile](https://github.com/ibnukhairul/wolfycreativapp)
 * **Tautan Video Penjelasan (5–10 Menit):** *[Isi Tautan YouTube / Google Drive Anda]*
 
 ---
