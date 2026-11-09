@@ -46,3 +46,12 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Environment variables & Sensitive Credentials (UTS Rule 3)
+.env
+.env.*
+*.env
+
+# Maestro local test files
+.maestro/
+
