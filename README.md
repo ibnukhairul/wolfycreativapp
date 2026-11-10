@@ -13,7 +13,7 @@
 * **NIM:** *230103227*
 * **Kelas:** TI23B
 * **Program Studi:** S1 Teknik Informatika
-* **Repositori Git:** [https://github.com/ibnukhairul/wolfycreativ_mobile](https://github.com/ibnukhairul/wolfycreativ_mobile)
+* **Repositori Git:** [https://github.com/ibnukhairul/wolfycreativapp](https://github.com/ibnukhairul/wolfycreativapp)
 * **Tautan Video Penjelasan (5–10 Menit):** *[Isi Tautan YouTube / Google Drive Anda]*
 
 ---
@@ -96,8 +96,8 @@ Setiap berkas flow dilengkapi dengan:
 ### A. Menjalankan Aplikasi (Flutter)
 ```bash
 # 1. Klon repositori
-git clone https://github.com/ibnukhairul/wolfycreativ_mobile.git
-cd wolfycreativ_mobile
+git clone https://github.com/ibnukhairul/wolfycreativapp.git
+cd wolfycreativapp
 
 # 2. Ambil seluruh dependensi pub
 flutter pub get
